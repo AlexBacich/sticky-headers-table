@@ -34,11 +34,11 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 ## Support
 
-Please file [issues and feature requests]().
+Please file [issues and feature requests](https://github.com/AlexBacich/sticky-headers-table).
 
 ## Getting Started
 
