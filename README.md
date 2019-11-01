@@ -4,6 +4,9 @@ This package for [Flutter](https://flutter.io) allows you to display two-dimensi
 
 Key of this package is sticky headers. Cells aren't much customizable now. It's quite easy to see in separate class all parameters and change them. In future I plan to add customization in table constructor. Feature requests and PRs are welcome.  
 
+![Пример работы](https://github.com/AlexBacich/sticky-headers-table/blob/master/example/sticky_demo.gif?raw=true)
+
+
 Usage example:
 
 ```dart

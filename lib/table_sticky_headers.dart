@@ -15,7 +15,7 @@ class StickyHeadersTable extends StatefulWidget {
     @required this.rowsLength,
 
     /// Title for Top Left cell (always visible)
-    this.legendCell = '',
+    this.legendCell = const Text(' '),
 
     /// Builder for column titles. Takes index of content column as parameter
     /// and returns String for column title
@@ -28,6 +28,12 @@ class StickyHeadersTable extends StatefulWidget {
     /// Builder for content cell. Takes index for content column first,
     /// index for content row second and returns String for cell
     @required this.contentCellBuilder,
+
+    /// Table cell dimensions
+    this.cellDimensions = CellDimensions.base,
+
+    /// Type of fit for content
+    this.cellFit = BoxFit.scaleDown,
   }) : super(key: key) {
     assert(columnsLength != null);
     assert(rowsLength != null);
@@ -38,10 +44,12 @@ class StickyHeadersTable extends StatefulWidget {
 
   final int rowsLength;
   final int columnsLength;
-  final String legendCell;
-  final String Function(int colulmnIndex) columnsTitleBuilder;
-  final String Function(int rowIndex) rowsTitleBuilder;
-  final String Function(int columnIndex, int rowIndex) contentCellBuilder;
+  final Widget legendCell;
+  final Widget Function(int colulmnIndex) columnsTitleBuilder;
+  final Widget Function(int rowIndex) rowsTitleBuilder;
+  final Widget Function(int columnIndex, int rowIndex) contentCellBuilder;
+  final CellDimensions cellDimensions;
+  final BoxFit cellFit;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
@@ -54,15 +62,15 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
   final ScrollController _horizontalBodyController = ScrollController();
   final ScrollController _horizontalTitleController = ScrollController();
 
-  SyncScrollController _verticalSyncController;
-  SyncScrollController _horizontalSyncController;
+  _SyncScrollController _verticalSyncController;
+  _SyncScrollController _horizontalSyncController;
 
   @override
   void initState() {
     super.initState();
-    _verticalSyncController = SyncScrollController(
+    _verticalSyncController = _SyncScrollController(
         [_verticalTitleController, _verticalBodyController]);
-    _horizontalSyncController = SyncScrollController(
+    _horizontalSyncController = _SyncScrollController(
         [_horizontalTitleController, _horizontalBodyController]);
   }
 
@@ -72,9 +80,16 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            // TOP LEFT STICKY
-            _Item(widget.legendCell, cellType: CellType.Legend),
-            // TOP TITLE STICKY
+            // STICKY LEGEND
+            Container(
+              width: widget.cellDimensions.stickyLegendWidth,
+              height: widget.cellDimensions.stickyLegendHeight,
+              child: FittedBox(
+                fit: widget.cellFit,
+                child: widget.legendCell,
+              ),
+            ),
+            // STICKY ROW
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
@@ -83,9 +98,13 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(
                       widget.columnsLength,
-                      (i) => _Item(
-                        widget.columnsTitleBuilder(i),
-                        cellType: CellType.Top,
+                          (i) => Container(
+                        width: widget.cellDimensions.contentCellWidth,
+                        height: widget.cellDimensions.stickyLegendHeight,
+                        child: FittedBox(
+                          fit: widget.cellFit,
+                          child: widget.columnsTitleBuilder(i),
+                        ),
                       ),
                     ),
                   ),
@@ -104,15 +123,19 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // LEFT TITLE STICKY
+              // STICKY COLUMN
               NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
                   child: Column(
                     children: List.generate(
                       widget.rowsLength,
-                      (i) => _Item(
-                        widget.rowsTitleBuilder(i),
-                        cellType: CellType.Left,
+                          (i) => Container(
+                        width: widget.cellDimensions.stickyLegendWidth,
+                        height: widget.cellDimensions.contentCellHeight,
+                        child: FittedBox(
+                          fit: widget.cellFit,
+                          child: widget.rowsTitleBuilder(i),
+                        ),
                       ),
                     ),
                   ),
@@ -124,7 +147,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                   return true;
                 },
               ),
-              // BODY PRICES
+              // CONTENT
               Expanded(
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification notification) {
@@ -141,15 +164,19 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                           child: Column(
                             children: List.generate(
                               widget.rowsLength,
-                              (int i) => Row(
+                                  (int i) => Row(
                                 children: List.generate(
                                   widget.columnsLength,
-                                  (int j) {
-                                    return _Item(
-                                      widget.contentCellBuilder(j, i),
-                                      cellType: CellType.Body,
-                                    );
-                                  },
+                                      (int j) => Container(
+                                    width:
+                                    widget.cellDimensions.contentCellWidth,
+                                    height:
+                                    widget.cellDimensions.contentCellHeight,
+                                    child: FittedBox(
+                                      fit: widget.cellFit,
+                                      child: widget.contentCellBuilder(j, i),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -171,103 +198,38 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
   }
 }
 
-enum CellType {
-  Top,
-  Left,
-  Body,
-  Legend,
-}
+/// Dimensions for table
+class CellDimensions {
+  const CellDimensions({
+    /// Content cell width. It also applied to sticky row width.
+    @required this.contentCellWidth,
 
-class _Item extends StatelessWidget {
-  _Item(this.text, {@required this.cellType, this.onTap});
+    /// Content cell height. It also applied to sticky column height.
+    @required this.contentCellHeight,
 
-  final String text;
-  final CellType cellType;
-  final Function onTap;
+    /// Sticky legend width. It also applied to sticky column width.
+    @required this.stickyLegendWidth,
 
-  double get _width =>
-      cellType == CellType.Left || cellType == CellType.Legend ? 120.0 : 70.0;
+    /// Sticky legend height/ It also applied to sticky row height.
+    @required this.stickyLegendHeight,
+  });
 
-  Color get _colorBg => cellType == CellType.Left || cellType == CellType.Body
-      ? Colors.white
-      : Colors.amber;
+  final double contentCellWidth;
+  final double contentCellHeight;
+  final double stickyLegendWidth;
+  final double stickyLegendHeight;
 
-  Color get _colorHorizontalBorder =>
-      cellType == CellType.Left || cellType == CellType.Body
-          ? Colors.amber
-          : Colors.white;
-
-  Color get _colorVerticalBorder =>
-      cellType == CellType.Left || cellType == CellType.Body
-          ? Colors.black38
-          : Colors.amber;
-
-  EdgeInsets get _padding =>
-      cellType == CellType.Left || cellType == CellType.Legend
-          ? EdgeInsets.only(left: 24.0)
-          : EdgeInsets.zero;
-
-  TextAlign get _textAlign =>
-      cellType == CellType.Left || cellType == CellType.Legend
-          ? TextAlign.start
-          : TextAlign.center;
-
-  @override
-  Widget build(BuildContext context) {
-    TextStyle getTextStyle() {
-      final textTheme = Theme.of(context).textTheme;
-      if (cellType == CellType.Legend)
-        return textTheme.button.copyWith(fontSize: 16.5);
-      if (cellType == CellType.Top)
-        return textTheme.button.copyWith(fontSize: 15.0);
-      if (cellType == CellType.Left)
-        return textTheme.button.copyWith(fontSize: 15.0);
-      if (cellType == CellType.Body)
-        return textTheme.body2.copyWith(fontSize: 12.0);
-      return null;
-    }
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: _width,
-        height: 50,
-        padding: _padding,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(horizontal: 2.0),
-                child: Text(
-                  text,
-                  style: getTextStyle(),
-                  maxLines: 2,
-                  textAlign: _textAlign,
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 1.1,
-              color: _colorVerticalBorder,
-            ),
-          ],
-        ),
-        decoration: BoxDecoration(
-            border: Border(
-              left: BorderSide(color: _colorHorizontalBorder),
-              right: BorderSide(color: _colorHorizontalBorder),
-            ),
-            color: _colorBg),
-      ),
-    );
-  }
+  static const CellDimensions base = CellDimensions(
+    contentCellWidth: 70.0,
+    contentCellHeight: 50.0,
+    stickyLegendWidth: 120.0,
+    stickyLegendHeight: 50.0,
+  );
 }
 
 /// SyncScrollController keeps scroll controllers in sync.
-class SyncScrollController {
-  SyncScrollController(List<ScrollController> controllers) {
+class _SyncScrollController {
+  _SyncScrollController(List<ScrollController> controllers) {
     controllers
         .forEach((controller) => _registeredScrollControllers.add(controller));
   }

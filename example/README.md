@@ -1,0 +1,2 @@
+* main.dart - the simplest example of table with sticky headers usage.
+* decorated_example - shows how to use decoration for table. It also includes example on how to set click listeners on table cells. Once you tap on cell - entire row and column gets highlighted. Tap on sticky row or column to deselect.
