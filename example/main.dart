@@ -1,11 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
-void main() => runApp(TableSimple());
+void main() {
+  final columns = 10;
+  final rows = 20;
+
+  List<List<String>> _makeData() {
+    final List<List<String>> output = [];
+    for (int i = 0; i < columns; i++) {
+      final List<String> row = [];
+      for (int j = 0; j < rows; j++) {
+        row.add('T$i : L$j');
+      }
+      output.add(row);
+    }
+    return output;
+  }
+
+  /// Simple generator for column title
+  List<String> _makeTitleColumn() => List.generate(columns, (i) => 'Top $i');
+
+  /// Simple generator for row title
+  List<String> _makeTitleRow() => List.generate(rows, (i) => 'Left $i');
+
+  runApp(
+    TableSimple(
+      titleColumn: _makeTitleColumn(),
+      titleRow: _makeTitleRow(),
+      data: _makeData(),
+    ),
+  );
+}
 
 class TableSimple extends StatelessWidget {
-  final List<String> columns = List.generate(10, (i) => '${i + 1}');
-  final List<String> rows = List.generate(20, (i) => '${i + 1}');
+  TableSimple(
+      {@required this.data,
+        @required this.titleColumn,
+        @required this.titleRow});
+
+  final List<List<String>> data;
+  final List<String> titleColumn;
+  final List<String> titleRow;
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +51,14 @@ class TableSimple extends StatelessWidget {
           backgroundColor: Colors.amber,
         ),
         body: StickyHeadersTable(
-          columnsLength: columns.length,
-          rowsLength: rows.length,
-          columnsTitleBuilder: (i) => Text('Top ${columns[i]}'),
-          rowsTitleBuilder: (i) => Text('Left ${rows[i]}'),
-          contentCellBuilder: (i, j) => Text('T${columns[i]} : L${rows[j]}'),
+          columnsLength: titleColumn.length,
+          rowsLength: titleRow.length,
+          columnsTitleBuilder: (i) => Text(titleColumn[i]),
+          rowsTitleBuilder: (i) => Text(titleRow[i]),
+          contentCellBuilder: (i, j) => Text(data[i][j]),
           legendCell: Text('Sticky Legend'),
         ),
       ),
     );
   }
 }
-

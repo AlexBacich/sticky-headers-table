@@ -1,73 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  final columns = 10;
+  final rows = 20;
 
-/// This example shows how to use decoration for table. It also includes example on how to set click listeners on table cells. Once you tap on cell - entire row and column gets highlighted. Tap on sticky row or column to deselect.
-class MyApp extends StatefulWidget {
-  final List<String> columns = List.generate(10, (i) => '${i + 1}');
-  final List<String> rows = List.generate(20, (i) => '${i + 1}');
-
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  int selectedRow;
-  int selectedColumn;
-
-  Color getContentColor(int i, int j) {
-    if (i == selectedRow && j == selectedColumn) {
-      return Colors.amber;
-    } else if (i == selectedRow || j == selectedColumn) {
-      return Colors.amberAccent;
-    } else {
-      return Colors.white;
+  List<List<String>> _makeData() {
+    final List<List<String>> output = [];
+    for (int i = 0; i < columns; i++) {
+      final List<String> row = [];
+      for (int j = 0; j < rows; j++) {
+        row.add('T$i : L$j');
+      }
+      output.add(row);
     }
+    return output;
   }
 
-  void clearState() => setState(() {
-        selectedRow = null;
-        selectedColumn = null;
-      });
+  /// Simple generator for column title
+  List<String> _makeTitleColumn() => List.generate(columns, (i) => 'Top $i');
+
+  /// Simple generator for row title
+  List<String> _makeTitleRow() => List.generate(rows, (i) => 'Left $i');
+
+  runApp(
+    TableDecorated(
+      titleColumn: _makeTitleColumn(),
+      titleRow: _makeTitleRow(),
+      data: _makeData(),
+    ),
+  );
+}
+
+class TableDecorated extends StatelessWidget {
+  TableDecorated(
+      {@required this.data,
+        @required this.titleColumn,
+        @required this.titleRow});
+
+  final List<List<String>> data;
+  final List<String> titleColumn;
+  final List<String> titleRow;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return MaterialApp(
-      title: 'Flutter Demo',
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Sticky Headers Two-Dimension  Table'),
+          title: Text(
+            'Sticky Headers Two-Dimension  Table decorated',
+            maxLines: 2,
+          ),
           backgroundColor: Colors.amber,
         ),
         body: StickyHeadersTable(
-          columnsLength: widget.columns.length,
-          rowsLength: widget.rows.length,
+          columnsLength: titleColumn.length,
+          rowsLength: titleRow.length,
           columnsTitleBuilder: (i) => TableCell.stickyRow(
-            'Top ${widget.columns[i]}',
+            titleColumn[i],
             textStyle: textTheme.button.copyWith(fontSize: 15.0),
-            onTap: clearState,
           ),
           rowsTitleBuilder: (i) => TableCell.stickyColumn(
-            'Left ${widget.rows[i]}',
+            titleRow[i],
             textStyle: textTheme.button.copyWith(fontSize: 15.0),
-            onTap: clearState,
           ),
           contentCellBuilder: (i, j) => TableCell.content(
-            'T${widget.columns[i]} : L${widget.rows[j]}',
+            data[i][j],
             textStyle: textTheme.body2.copyWith(fontSize: 12.0),
-            colorBg: getContentColor(i, j),
-            onTap: () => setState(() {
-              selectedColumn = j;
-              selectedRow = i;
-            }),
           ),
           legendCell: TableCell.legend(
             'Sticky Legend',
             textStyle: textTheme.button.copyWith(fontSize: 16.5),
-            onTap: clearState,
           ),
         ),
       ),
@@ -77,12 +82,12 @@ class _MyAppState extends State<MyApp> {
 
 class TableCell extends StatelessWidget {
   TableCell.content(
-    this.text, {
-    this.textStyle,
-    this.cellDimensions = CellDimensions.base,
-    this.colorBg = Colors.white,
-    this.onTap,
-  })  : cellWidth = cellDimensions.contentCellWidth,
+      this.text, {
+        this.textStyle,
+        this.cellDimensions = CellDimensions.base,
+        this.colorBg = Colors.white,
+        this.onTap,
+      })  : cellWidth = cellDimensions.contentCellWidth,
         cellHeight = cellDimensions.contentCellHeight,
         _colorHorizontalBorder = Colors.amber,
         _colorVerticalBorder = Colors.black38,
@@ -90,12 +95,12 @@ class TableCell extends StatelessWidget {
         _padding = EdgeInsets.zero;
 
   TableCell.legend(
-    this.text, {
-    this.textStyle,
-    this.cellDimensions = CellDimensions.base,
-    this.colorBg = Colors.amber,
-    this.onTap,
-  })  : cellWidth = cellDimensions.stickyLegendWidth,
+      this.text, {
+        this.textStyle,
+        this.cellDimensions = CellDimensions.base,
+        this.colorBg = Colors.amber,
+        this.onTap,
+      })  : cellWidth = cellDimensions.stickyLegendWidth,
         cellHeight = cellDimensions.stickyLegendHeight,
         _colorHorizontalBorder = Colors.white,
         _colorVerticalBorder = Colors.amber,
@@ -103,12 +108,12 @@ class TableCell extends StatelessWidget {
         _padding = EdgeInsets.only(left: 24.0);
 
   TableCell.stickyRow(
-    this.text, {
-    this.textStyle,
-    this.cellDimensions = CellDimensions.base,
-    this.colorBg = Colors.amber,
-    this.onTap,
-  })  : cellWidth = cellDimensions.contentCellWidth,
+      this.text, {
+        this.textStyle,
+        this.cellDimensions = CellDimensions.base,
+        this.colorBg = Colors.amber,
+        this.onTap,
+      })  : cellWidth = cellDimensions.contentCellWidth,
         cellHeight = cellDimensions.stickyLegendHeight,
         _colorHorizontalBorder = Colors.white,
         _colorVerticalBorder = Colors.amber,
@@ -116,12 +121,12 @@ class TableCell extends StatelessWidget {
         _padding = EdgeInsets.zero;
 
   TableCell.stickyColumn(
-    this.text, {
-    this.textStyle,
-    this.cellDimensions = CellDimensions.base,
-    this.colorBg = Colors.white,
-    this.onTap,
-  })  : cellWidth = cellDimensions.stickyLegendWidth,
+      this.text, {
+        this.textStyle,
+        this.cellDimensions = CellDimensions.base,
+        this.colorBg = Colors.white,
+        this.onTap,
+      })  : cellWidth = cellDimensions.stickyLegendWidth,
         cellHeight = cellDimensions.contentCellHeight,
         _colorHorizontalBorder = Colors.amber,
         _colorVerticalBorder = Colors.black38,
@@ -184,3 +189,4 @@ class TableCell extends StatelessWidget {
     );
   }
 }
+

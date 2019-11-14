@@ -2,44 +2,41 @@
 
 This package for [Flutter](https://flutter.io) allows you to display two-dimension table with both sticky headers.
 
-Key of this package is sticky headers. Cells aren't much customizable now. It's quite easy to see in separate class all parameters and change them. In future I plan to add customization in table constructor. Feature requests and PRs are welcome.  
+Key of this package is sticky headers. You can scroll table any direction and headers (top and left) will always stay. 
+Cells themselves are fully customizable as you can fill them with Widgets. 
+
+To work with table you need to fill it with data. It has three builders for generating title column (List<Widget>), title row (List<Widget>) and content itself (List<Widget>.
+
+Simplest UseCase. You have two-dimensional array of Strings. Builder takes value from array and generates Text widget: 
+```dart
+contentCellBuilder: (i, j) => Text(data[i][j]),
+```
+
+For more advanced usage - decorate Text with other widgets like borders, cell colors, etc. Check decorated_example.dart to see it in action.
+You can also wrap cell with tap listeners and add custom behavior on tap. Check tap_handler_example.dart. 
+  
+Feature requests and PRs are welcome.  
 
 ![Пример работы](https://github.com/AlexBacich/sticky-headers-table/blob/master/example/sticky_demo.gif?raw=true)
 
 
-Usage example:
-
+Widget usage example:
 ```dart
-import 'package:flutter/material.dart';
+// titleColumn - List<String> (title column)
+// titleColumn - List<String> (title row)
+// titleColumn - List<List<String>> (data)
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    List<String> tops = List.generate(20, (i) => '${i + 1}');
-    List<String> lefts = List.generate(20, (i) => '${i + 1}');
-
-    return MaterialApp(
-      title: 'Flutter Demo',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Sticky Headers Two-Dimension  Table'),
-          backgroundColor: Colors.amber,
+StickyHeadersTable(
+          columnsLength: titleColumn.length,
+          rowsLength: titleRow.length,
+          columnsTitleBuilder: (i) => Text(titleColumn[i]),
+          rowsTitleBuilder: (i) => Text(titleRow[i]),
+          contentCellBuilder: (i, j) => Text(data[i][j]),
+          legendCell: Text('Sticky Legend'),
         ),
-        body: StickyHeadersTable(
-          columnsLength: tops.length,
-          rowsLength: lefts.length,
-          columnsTitleBuilder: (i) => 'Top ${tops[i]}',
-          rowsTitleBuilder: (i) => 'Left ${lefts[i]}',
-          contentCellBuilder: (i, j) => 'T${tops[i]} : L${lefts[j]}',
-          legendCell: 'Permanently Sticky',
-        ),
-      ),
-    );
-  }
-}
 ```
+
+Visit examples to see it in details
 
 ## Support
 
