@@ -40,6 +40,16 @@ class StickyHeadersTable extends StatefulWidget {
     assert(columnsTitleBuilder != null);
     assert(rowsTitleBuilder != null);
     assert(contentCellBuilder != null);
+    assert(cellDimensions.contentCellWidth != null ||
+        cellDimensions.contentCellWidths != null);
+    assert(cellDimensions.contentCellHeight != null ||
+        cellDimensions.contentCellHeights != null);
+    if (cellDimensions.contentCellWidths != null) {
+      assert(cellDimensions.contentCellWidths.length == columnsLength);
+    }
+    if (cellDimensions.contentCellHeights != null) {
+      assert(cellDimensions.contentCellHeights.length == rowsLength);
+    }
   }
 
   final int rowsLength;
@@ -98,8 +108,10 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(
                       widget.columnsLength,
-                          (i) => Container(
-                        width: widget.cellDimensions.contentCellWidth,
+                      (i) => Container(
+                        width: widget.cellDimensions.contentCellWidths != null
+                            ? widget.cellDimensions.contentCellWidths[i]
+                            : widget.cellDimensions.contentCellWidth,
                         height: widget.cellDimensions.stickyLegendHeight,
                         child: FittedBox(
                           fit: widget.cellFit,
@@ -129,9 +141,11 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                   child: Column(
                     children: List.generate(
                       widget.rowsLength,
-                          (i) => Container(
+                      (i) => Container(
                         width: widget.cellDimensions.stickyLegendWidth,
-                        height: widget.cellDimensions.contentCellHeight,
+                        height: widget.cellDimensions.contentCellHeights != null
+                            ? widget.cellDimensions.contentCellHeights[i]
+                            : widget.cellDimensions.contentCellHeight,
                         child: FittedBox(
                           fit: widget.cellFit,
                           child: widget.rowsTitleBuilder(i),
@@ -164,14 +178,24 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                           child: Column(
                             children: List.generate(
                               widget.rowsLength,
-                                  (int i) => Row(
+                              (int i) => Row(
                                 children: List.generate(
                                   widget.columnsLength,
-                                      (int j) => Container(
-                                    width:
-                                    widget.cellDimensions.contentCellWidth,
-                                    height:
-                                    widget.cellDimensions.contentCellHeight,
+                                  (int j) => Container(
+                                    width: widget.cellDimensions
+                                                .contentCellWidths !=
+                                            null
+                                        ? widget
+                                            .cellDimensions.contentCellWidths[j]
+                                        : widget
+                                            .cellDimensions.contentCellWidth,
+                                    height: widget.cellDimensions
+                                                .contentCellHeights !=
+                                            null
+                                        ? widget.cellDimensions
+                                            .contentCellHeights[i]
+                                        : widget
+                                            .cellDimensions.contentCellHeight,
                                     child: FittedBox(
                                       fit: widget.cellFit,
                                       child: widget.contentCellBuilder(j, i),
@@ -202,10 +226,24 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
 class CellDimensions {
   const CellDimensions({
     /// Content cell width. It also applied to sticky row width.
-    @required this.contentCellWidth,
+    this.contentCellWidth,
+
+    /// Content cell widths - if different width for each content cell needed.
+    /// It is also applied to sticky row widths. Need to specify either
+    /// contentCellWidth or contentCellWidths or assertion will fail.
+    /// Length of list needs to match columnsLength.
+    /// Overrides contentCellWidth if both are specified.
+    this.contentCellWidths,
 
     /// Content cell height. It also applied to sticky column height.
-    @required this.contentCellHeight,
+    this.contentCellHeight,
+
+    /// Content cell heights - if different height for each content cell needed.
+    /// It is also applied to sticky row heights. Need to specify either
+    /// contentCellHeight or contentCellHeights or assertion will fail.
+    /// Length of list needs to match rowsLength.
+    /// Overrides contentCellHeight if both are specified.
+    this.contentCellHeights,
 
     /// Sticky legend width. It also applied to sticky column width.
     @required this.stickyLegendWidth,
@@ -215,7 +253,9 @@ class CellDimensions {
   });
 
   final double contentCellWidth;
+  final List<double> contentCellWidths;
   final double contentCellHeight;
+  final List<double> contentCellHeights;
   final double stickyLegendWidth;
   final double stickyLegendHeight;
 
