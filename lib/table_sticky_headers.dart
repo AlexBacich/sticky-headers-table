@@ -239,12 +239,10 @@ class CellDimensions {
   })  : this.contentCellWidths = null,
         this.contentCellHeights = null;
 
+  /// Use if different width for each content cell is needed.
   const CellDimensions.variableWidth({
-    /// Content cell widths - if different width for each content cell needed.
-    /// It is also applied to sticky row widths. Need to specify either
-    /// contentCellWidth or contentCellWidths or assertion will fail.
+    /// Content cell widths. Also applied to sticky row widths.
     /// Length of list needs to match columnsLength.
-    /// Overrides contentCellWidth if both are specified.
     @required this.contentCellWidths,
 
     /// Content cell height. It also applied to sticky column height.
@@ -258,15 +256,13 @@ class CellDimensions {
   })  : this.contentCellWidth = null,
         this.contentCellHeights = null;
 
+  /// Use if different height for each content cell is needed.
   const CellDimensions.variableHeight({
     /// Content cell width. It also applied to sticky row width.
     @required this.contentCellWidth,
 
-    /// Content cell heights - if different height for each content cell needed.
-    /// It is also applied to sticky row heights. Need to specify either
-    /// contentCellHeight or contentCellHeights or assertion will fail.
+    /// Content cell heights. Also applied to sticky row heights.
     /// Length of list needs to match rowsLength.
-    /// Overrides contentCellHeight if both are specified.
     @required this.contentCellHeights,
 
     /// Sticky legend width. It also applied to sticky column width.
@@ -277,19 +273,14 @@ class CellDimensions {
   })  : this.contentCellWidths = null,
         this.contentCellHeight = null;
 
+  /// Use if different width and height for each content cell is needed.
   const CellDimensions.variableWidthAndHeight({
-    /// Content cell widths - if different width for each content cell needed.
-    /// It is also applied to sticky row widths. Need to specify either
-    /// contentCellWidth or contentCellWidths or assertion will fail.
+    /// Content cell widths. Also applied to sticky row widths.
     /// Length of list needs to match columnsLength.
-    /// Overrides contentCellWidth if both are specified.
     @required this.contentCellWidths,
 
-    /// Content cell heights - if different height for each content cell needed.
-    /// It is also applied to sticky row heights. Need to specify either
-    /// contentCellHeight or contentCellHeights or assertion will fail.
+    /// Content cell heights. Also applied to sticky row heights.
     /// Length of list needs to match rowsLength.
-    /// Overrides contentCellHeight if both are specified.
     @required this.contentCellHeights,
 
     /// Sticky legend width. It also applied to sticky column width.
