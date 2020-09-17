@@ -226,31 +226,79 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
 class CellDimensions {
   const CellDimensions({
     /// Content cell width. It also applied to sticky row width.
-    this.contentCellWidth,
-
-    /// Content cell widths - if different width for each content cell needed.
-    /// It is also applied to sticky row widths. Need to specify either
-    /// contentCellWidth or contentCellWidths or assertion will fail.
-    /// Length of list needs to match columnsLength.
-    /// Overrides contentCellWidth if both are specified.
-    this.contentCellWidths,
+    @required this.contentCellWidth,
 
     /// Content cell height. It also applied to sticky column height.
-    this.contentCellHeight,
-
-    /// Content cell heights - if different height for each content cell needed.
-    /// It is also applied to sticky row heights. Need to specify either
-    /// contentCellHeight or contentCellHeights or assertion will fail.
-    /// Length of list needs to match rowsLength.
-    /// Overrides contentCellHeight if both are specified.
-    this.contentCellHeights,
+    @required this.contentCellHeight,
 
     /// Sticky legend width. It also applied to sticky column width.
     @required this.stickyLegendWidth,
 
     /// Sticky legend height/ It also applied to sticky row height.
     @required this.stickyLegendHeight,
-  });
+  })  : this.contentCellWidths = null,
+        this.contentCellHeights = null;
+
+  const CellDimensions.variableWidth({
+    /// Content cell widths - if different width for each content cell needed.
+    /// It is also applied to sticky row widths. Need to specify either
+    /// contentCellWidth or contentCellWidths or assertion will fail.
+    /// Length of list needs to match columnsLength.
+    /// Overrides contentCellWidth if both are specified.
+    @required this.contentCellWidths,
+
+    /// Content cell height. It also applied to sticky column height.
+    @required this.contentCellHeight,
+
+    /// Sticky legend width. It also applied to sticky column width.
+    @required this.stickyLegendWidth,
+
+    /// Sticky legend height/ It also applied to sticky row height.
+    @required this.stickyLegendHeight,
+  })  : this.contentCellWidth = null,
+        this.contentCellHeights = null;
+
+  const CellDimensions.variableHeight({
+    /// Content cell width. It also applied to sticky row width.
+    @required this.contentCellWidth,
+
+    /// Content cell heights - if different height for each content cell needed.
+    /// It is also applied to sticky row heights. Need to specify either
+    /// contentCellHeight or contentCellHeights or assertion will fail.
+    /// Length of list needs to match rowsLength.
+    /// Overrides contentCellHeight if both are specified.
+    @required this.contentCellHeights,
+
+    /// Sticky legend width. It also applied to sticky column width.
+    @required this.stickyLegendWidth,
+
+    /// Sticky legend height/ It also applied to sticky row height.
+    @required this.stickyLegendHeight,
+  })  : this.contentCellWidths = null,
+        this.contentCellHeight = null;
+
+  const CellDimensions.variableWidthAndHeight({
+    /// Content cell widths - if different width for each content cell needed.
+    /// It is also applied to sticky row widths. Need to specify either
+    /// contentCellWidth or contentCellWidths or assertion will fail.
+    /// Length of list needs to match columnsLength.
+    /// Overrides contentCellWidth if both are specified.
+    @required this.contentCellWidths,
+
+    /// Content cell heights - if different height for each content cell needed.
+    /// It is also applied to sticky row heights. Need to specify either
+    /// contentCellHeight or contentCellHeights or assertion will fail.
+    /// Length of list needs to match rowsLength.
+    /// Overrides contentCellHeight if both are specified.
+    @required this.contentCellHeights,
+
+    /// Sticky legend width. It also applied to sticky column width.
+    @required this.stickyLegendWidth,
+
+    /// Sticky legend height/ It also applied to sticky row height.
+    @required this.stickyLegendHeight,
+  })  : this.contentCellWidth = null,
+        this.contentCellHeight = null;
 
   final double contentCellWidth;
   final List<double> contentCellWidths;
