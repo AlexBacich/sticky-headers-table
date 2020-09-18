@@ -13,7 +13,9 @@ contentCellBuilder: (i, j) => Text(data[i][j]),
 ```
 
 For more advanced usage - decorate Text with other widgets like borders, cell colors, etc. Check decorated_example.dart to see it in action.
-You can also wrap cell with tap listeners and add custom behavior on tap. Check tap_handler_example.dart. 
+You can also wrap cell with tap listeners and add custom behavior on tap. Check tap_handler_example.dart.
+
+You can also customize the cell dimensions using the cellDimensions property of StickyHeadersTable. Uniform or different cell widths and heights are both supported.
   
 Feature requests and PRs are welcome.  
 
