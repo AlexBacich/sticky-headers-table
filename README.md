@@ -15,7 +15,12 @@ contentCellBuilder: (i, j) => Text(data[i][j]),
 For more advanced usage - decorate Text with other widgets like borders, cell colors, etc. Check decorated_example.dart to see it in action.
 You can also wrap cell with tap listeners and add custom behavior on tap. Check tap_handler_example.dart.
 
-You can also customize the cell dimensions using the cellDimensions property of StickyHeadersTable. Uniform or different cell widths and heights are both supported.
+The cell dimensions can be customized using the cellDimensions property of StickyHeadersTable. Use:
+- CellDimensions.base for default fixed values.
+- CellDimensions.fixed for custom fixed width and height for each content cell.
+- CellDimensions.variableColumnWidth if you need different width for each column.
+- CellDimensions.variableRowHeight if you need different height for each row.
+- CellDimensions.variableColumnWidthAndRowHeight if you need different width for each column and different height for each row.
   
 Feature requests and PRs are welcome.  
 
