@@ -41,14 +41,14 @@ class StickyHeadersTable extends StatefulWidget {
     assert(rowsTitleBuilder != null);
     assert(contentCellBuilder != null);
     assert(cellDimensions.contentCellWidth != null ||
-        cellDimensions.contentCellWidths != null);
+        cellDimensions.columnWidths != null);
     assert(cellDimensions.contentCellHeight != null ||
-        cellDimensions.contentCellHeights != null);
-    if (cellDimensions.contentCellWidths != null) {
-      assert(cellDimensions.contentCellWidths.length == columnsLength);
+        cellDimensions.rowHeights != null);
+    if (cellDimensions.columnWidths != null) {
+      assert(cellDimensions.columnWidths.length == columnsLength);
     }
-    if (cellDimensions.contentCellHeights != null) {
-      assert(cellDimensions.contentCellHeights.length == rowsLength);
+    if (cellDimensions.rowHeights != null) {
+      assert(cellDimensions.rowHeights.length == rowsLength);
     }
   }
 
@@ -109,8 +109,8 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                     children: List.generate(
                       widget.columnsLength,
                       (i) => Container(
-                        width: widget.cellDimensions.contentCellWidths != null
-                            ? widget.cellDimensions.contentCellWidths[i]
+                        width: widget.cellDimensions.columnWidths != null
+                            ? widget.cellDimensions.columnWidths[i]
                             : widget.cellDimensions.contentCellWidth,
                         height: widget.cellDimensions.stickyLegendHeight,
                         child: FittedBox(
@@ -143,8 +143,8 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       widget.rowsLength,
                       (i) => Container(
                         width: widget.cellDimensions.stickyLegendWidth,
-                        height: widget.cellDimensions.contentCellHeights != null
-                            ? widget.cellDimensions.contentCellHeights[i]
+                        height: widget.cellDimensions.rowHeights != null
+                            ? widget.cellDimensions.rowHeights[i]
                             : widget.cellDimensions.contentCellHeight,
                         child: FittedBox(
                           fit: widget.cellFit,
@@ -182,18 +182,14 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                                 children: List.generate(
                                   widget.columnsLength,
                                   (int j) => Container(
-                                    width: widget.cellDimensions
-                                                .contentCellWidths !=
+                                    width: widget.cellDimensions.columnWidths !=
                                             null
-                                        ? widget
-                                            .cellDimensions.contentCellWidths[j]
+                                        ? widget.cellDimensions.columnWidths[j]
                                         : widget
                                             .cellDimensions.contentCellWidth,
-                                    height: widget.cellDimensions
-                                                .contentCellHeights !=
+                                    height: widget.cellDimensions.rowHeights !=
                                             null
-                                        ? widget.cellDimensions
-                                            .contentCellHeights[i]
+                                        ? widget.cellDimensions.rowHeights[i]
                                         : widget
                                             .cellDimensions.contentCellHeight,
                                     child: FittedBox(
@@ -224,81 +220,99 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
 
 /// Dimensions for table
 class CellDimensions {
+  @Deprecated('Use CellDimensions.fixed instead.')
   const CellDimensions({
-    /// Content cell width. It also applied to sticky row width.
+    /// Content cell width. Also applied to sticky row width.
     @required this.contentCellWidth,
 
-    /// Content cell height. It also applied to sticky column height.
+    /// Content cell height. Also applied to sticky column height.
     @required this.contentCellHeight,
 
-    /// Sticky legend width. It also applied to sticky column width.
+    /// Sticky legend width. Also applied to sticky column width.
     @required this.stickyLegendWidth,
 
-    /// Sticky legend height/ It also applied to sticky row height.
+    /// Sticky legend height. Also applied to sticky row height.
     @required this.stickyLegendHeight,
-  })  : this.contentCellWidths = null,
-        this.contentCellHeights = null;
+  })  : this.columnWidths = null,
+        this.rowHeights = null;
 
-  /// Use if different width for each content cell is needed.
-  const CellDimensions.variableWidth({
-    /// Content cell widths. Also applied to sticky row widths.
-    /// Length of list needs to match columnsLength.
-    @required this.contentCellWidths,
+  /// Use if the same width and height is needed for each content cell.
+  const CellDimensions.fixed({
+    /// Content cell width. Also applied to sticky row width.
+    @required this.contentCellWidth,
 
-    /// Content cell height. It also applied to sticky column height.
+    /// Content cell height. Also applied to sticky column height.
     @required this.contentCellHeight,
 
-    /// Sticky legend width. It also applied to sticky column width.
+    /// Sticky legend width. Also applied to sticky column width.
     @required this.stickyLegendWidth,
 
-    /// Sticky legend height/ It also applied to sticky row height.
+    /// Sticky legend height. Also applied to sticky row height.
+    @required this.stickyLegendHeight,
+  })  : this.columnWidths = null,
+        this.rowHeights = null;
+
+  /// Use if different width is needed for each column.
+  const CellDimensions.variableColumnWidth({
+    /// Column widths. Also applied to sticky row widths.
+    /// Length of list needs to match columnsLength.
+    @required this.columnWidths,
+
+    /// Content cell height. Also applied to sticky column height.
+    @required this.contentCellHeight,
+
+    /// Sticky legend width. Also applied to sticky column width.
+    @required this.stickyLegendWidth,
+
+    /// Sticky legend height. Also applied to sticky row height.
     @required this.stickyLegendHeight,
   })  : this.contentCellWidth = null,
-        this.contentCellHeights = null;
+        this.rowHeights = null;
 
-  /// Use if different height for each content cell is needed.
-  const CellDimensions.variableHeight({
-    /// Content cell width. It also applied to sticky row width.
+  /// Use if different height is needed for each row.
+  const CellDimensions.variableRowHeight({
+    /// Content cell width. Also applied to sticky row width.
     @required this.contentCellWidth,
 
-    /// Content cell heights. Also applied to sticky row heights.
+    /// Row heights. Also applied to sticky row heights.
     /// Length of list needs to match rowsLength.
-    @required this.contentCellHeights,
+    @required this.rowHeights,
 
-    /// Sticky legend width. It also applied to sticky column width.
+    /// Sticky legend width. Also applied to sticky column width.
     @required this.stickyLegendWidth,
 
-    /// Sticky legend height/ It also applied to sticky row height.
+    /// Sticky legend height. Also applied to sticky row height.
     @required this.stickyLegendHeight,
-  })  : this.contentCellWidths = null,
+  })  : this.columnWidths = null,
         this.contentCellHeight = null;
 
-  /// Use if different width and height for each content cell is needed.
-  const CellDimensions.variableWidthAndHeight({
-    /// Content cell widths. Also applied to sticky row widths.
+  /// Use if different width is needed for each column and different height
+  /// is needed for each row.
+  const CellDimensions.variableColumnWidthAndRowHeight({
+    /// Column widths. Also applied to sticky row widths.
     /// Length of list needs to match columnsLength.
-    @required this.contentCellWidths,
+    @required this.columnWidths,
 
-    /// Content cell heights. Also applied to sticky row heights.
+    /// Row heights. Also applied to sticky row heights.
     /// Length of list needs to match rowsLength.
-    @required this.contentCellHeights,
+    @required this.rowHeights,
 
-    /// Sticky legend width. It also applied to sticky column width.
+    /// Sticky legend width. Also applied to sticky column width.
     @required this.stickyLegendWidth,
 
-    /// Sticky legend height/ It also applied to sticky row height.
+    /// Sticky legend height. Also applied to sticky row height.
     @required this.stickyLegendHeight,
   })  : this.contentCellWidth = null,
         this.contentCellHeight = null;
 
   final double contentCellWidth;
-  final List<double> contentCellWidths;
   final double contentCellHeight;
-  final List<double> contentCellHeights;
+  final List<double> columnWidths;
+  final List<double> rowHeights;
   final double stickyLegendWidth;
   final double stickyLegendHeight;
 
-  static const CellDimensions base = CellDimensions(
+  static const CellDimensions base = CellDimensions.fixed(
     contentCellWidth: 70.0,
     contentCellHeight: 50.0,
     stickyLegendWidth: 120.0,
