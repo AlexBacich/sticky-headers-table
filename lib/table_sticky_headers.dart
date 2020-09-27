@@ -32,6 +32,9 @@ class StickyHeadersTable extends StatefulWidget {
     /// Table cell dimensions
     this.cellDimensions = CellDimensions.base,
 
+    /// Alignments for cell contents
+    this.cellAlignments = CellAlignments.base,
+
     /// Type of fit for content
     this.cellFit = BoxFit.scaleDown,
   }) : super(key: key) {
@@ -50,6 +53,33 @@ class StickyHeadersTable extends StatefulWidget {
     if (cellDimensions.rowHeights != null) {
       assert(cellDimensions.rowHeights.length == rowsLength);
     }
+    assert(cellAlignments.contentCellAlignment != null ||
+        cellAlignments.columnAlignments != null ||
+        cellAlignments.rowAlignments != null ||
+        cellAlignments.contentCellAlignments != null);
+    assert(cellAlignments.stickyColumnAlignment != null ||
+        cellAlignments.stickyColumnAlignments != null);
+    assert(cellAlignments.stickyRowAlignment != null ||
+        cellAlignments.stickyRowAlignments != null);
+    assert(cellAlignments.stickyLegendAlignment != null);
+    if (cellAlignments.columnAlignments != null) {
+      assert(cellAlignments.columnAlignments.length == columnsLength);
+    }
+    if (cellAlignments.rowAlignments != null) {
+      assert(cellAlignments.rowAlignments.length == rowsLength);
+    }
+    if (cellAlignments.contentCellAlignments != null) {
+      assert(cellAlignments.contentCellAlignments.length == rowsLength);
+      for (int i = 0; i < cellAlignments.contentCellAlignments.length; i++) {
+        assert(cellAlignments.contentCellAlignments[i].length == columnsLength);
+      }
+    }
+    if (cellAlignments.stickyColumnAlignments != null) {
+      assert(cellAlignments.stickyColumnAlignments.length == rowsLength);
+    }
+    if (cellAlignments.stickyRowAlignments != null) {
+      assert(cellAlignments.stickyRowAlignments.length == columnsLength);
+    }
   }
 
   final int rowsLength;
@@ -59,6 +89,7 @@ class StickyHeadersTable extends StatefulWidget {
   final Widget Function(int rowIndex) rowsTitleBuilder;
   final Widget Function(int columnIndex, int rowIndex) contentCellBuilder;
   final CellDimensions cellDimensions;
+  final CellAlignments cellAlignments;
   final BoxFit cellFit;
 
   @override
@@ -94,6 +125,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             Container(
               width: widget.cellDimensions.stickyLegendWidth,
               height: widget.cellDimensions.stickyLegendHeight,
+              alignment: widget.cellAlignments.stickyLegendAlignment,
               child: FittedBox(
                 fit: widget.cellFit,
                 child: widget.legendCell,
@@ -113,6 +145,10 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                             ? widget.cellDimensions.columnWidths[i]
                             : widget.cellDimensions.contentCellWidth,
                         height: widget.cellDimensions.stickyLegendHeight,
+                        alignment:
+                            widget.cellAlignments.stickyRowAlignments != null
+                                ? widget.cellAlignments.stickyRowAlignments[i]
+                                : widget.cellAlignments.stickyRowAlignment,
                         child: FittedBox(
                           fit: widget.cellFit,
                           child: widget.columnsTitleBuilder(i),
@@ -146,6 +182,11 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                         height: widget.cellDimensions.rowHeights != null
                             ? widget.cellDimensions.rowHeights[i]
                             : widget.cellDimensions.contentCellHeight,
+                        alignment:
+                            widget.cellAlignments.stickyColumnAlignments != null
+                                ? widget
+                                    .cellAlignments.stickyColumnAlignments[i]
+                                : widget.cellAlignments.stickyColumnAlignment,
                         child: FittedBox(
                           fit: widget.cellFit,
                           child: widget.rowsTitleBuilder(i),
@@ -192,6 +233,29 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                                         ? widget.cellDimensions.rowHeights[i]
                                         : widget
                                             .cellDimensions.contentCellHeight,
+                                    alignment: (() {
+                                      if (widget.cellAlignments
+                                              .contentCellAlignment !=
+                                          null) {
+                                        return widget.cellAlignments
+                                            .contentCellAlignment;
+                                      } else if (widget.cellAlignments
+                                              .columnAlignments !=
+                                          null) {
+                                        return widget
+                                            .cellAlignments.columnAlignments[j];
+                                      } else if (widget
+                                              .cellAlignments.rowAlignments !=
+                                          null) {
+                                        return widget
+                                            .cellAlignments.rowAlignments[i];
+                                      } else if (widget.cellAlignments
+                                              .contentCellAlignments !=
+                                          null) {
+                                        return widget.cellAlignments
+                                            .contentCellAlignments[i][j];
+                                      }
+                                    }()),
                                     child: FittedBox(
                                       fit: widget.cellFit,
                                       child: widget.contentCellBuilder(j, i),
@@ -218,7 +282,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
   }
 }
 
-/// Dimensions for table
+/// Dimensions for table.
 class CellDimensions {
   @Deprecated('Use CellDimensions.fixed instead.')
   const CellDimensions({
@@ -236,7 +300,19 @@ class CellDimensions {
   })  : this.columnWidths = null,
         this.rowHeights = null;
 
-  /// Use if the same width and height is needed for each content cell.
+  /// Same dimensions for each cell.
+  const CellDimensions.uniform({
+    @required double width,
+    @required double height,
+  }) : this.fixed(
+          contentCellWidth: width,
+          contentCellHeight: height,
+          stickyLegendWidth: width,
+          stickyLegendHeight: height,
+        );
+
+  /// Same dimensions for each content cell, but different dimensions for the
+  /// sticky legend, column and row.
   const CellDimensions.fixed({
     /// Content cell width. Also applied to sticky row width.
     @required this.contentCellWidth,
@@ -252,9 +328,9 @@ class CellDimensions {
   })  : this.columnWidths = null,
         this.rowHeights = null;
 
-  /// Use if different width is needed for each column.
+  /// Different width for each column.
   const CellDimensions.variableColumnWidth({
-    /// Column widths. Also applied to sticky row widths.
+    /// Column widths (for content only). Also applied to sticky row widths.
     /// Length of list needs to match columnsLength.
     @required this.columnWidths,
 
@@ -269,12 +345,12 @@ class CellDimensions {
   })  : this.contentCellWidth = null,
         this.rowHeights = null;
 
-  /// Use if different height is needed for each row.
+  /// Different height for each row.
   const CellDimensions.variableRowHeight({
     /// Content cell width. Also applied to sticky row width.
     @required this.contentCellWidth,
 
-    /// Row heights. Also applied to sticky row heights.
+    /// Row heights (for content only). Also applied to sticky row heights.
     /// Length of list needs to match rowsLength.
     @required this.rowHeights,
 
@@ -286,14 +362,13 @@ class CellDimensions {
   })  : this.columnWidths = null,
         this.contentCellHeight = null;
 
-  /// Use if different width is needed for each column and different height
-  /// is needed for each row.
+  /// Different width for each column and different height for each row.
   const CellDimensions.variableColumnWidthAndRowHeight({
-    /// Column widths. Also applied to sticky row widths.
+    /// Column widths (for content only). Also applied to sticky row widths.
     /// Length of list needs to match columnsLength.
     @required this.columnWidths,
 
-    /// Row heights. Also applied to sticky row heights.
+    /// Row heights (for content only). Also applied to sticky row heights.
     /// Length of list needs to match rowsLength.
     @required this.rowHeights,
 
@@ -318,6 +393,114 @@ class CellDimensions {
     stickyLegendWidth: 120.0,
     stickyLegendHeight: 50.0,
   );
+}
+
+/// Alignment for cell contents.
+class CellAlignments {
+  /// Same alignment for each cell.
+  const CellAlignments.uniform(Alignment alignment)
+      : this.fixed(
+          contentCellAlignment: alignment,
+          stickyColumnAlignment: alignment,
+          stickyRowAlignment: alignment,
+          stickyLegendAlignment: alignment,
+        );
+
+  /// Same alignment for each content cell, but different alignment for the
+  /// sticky column, row and legend.
+  const CellAlignments.fixed({
+    /// Same alignment for each content cell.
+    @required this.contentCellAlignment,
+
+    /// Same alignment for each sticky column cell.
+    @required this.stickyColumnAlignment,
+
+    /// Same alignment for each sticky row cell.
+    @required this.stickyRowAlignment,
+
+    /// Alignment for the sticky legend cell.
+    @required this.stickyLegendAlignment,
+  })  : columnAlignments = null,
+        rowAlignments = null,
+        contentCellAlignments = null,
+        stickyColumnAlignments = null,
+        stickyRowAlignments = null;
+
+  /// Different alignment for each column.
+  const CellAlignments.variableColumnAlignment({
+    /// Different alignment for each column (for content only).
+    /// Length of list must match columnsLength.
+    @required this.columnAlignments,
+
+    /// Different alignment for each sticky row cell.
+    /// Length of list must match columnsLength.
+    @required this.stickyRowAlignments,
+
+    /// Same alignment for each sticky column cell.
+    @required this.stickyColumnAlignment,
+
+    /// Alignment for the sticky legend cell.
+    @required this.stickyLegendAlignment,
+  })  : contentCellAlignment = null,
+        rowAlignments = null,
+        contentCellAlignments = null,
+        stickyColumnAlignments = null,
+        stickyRowAlignment = null;
+
+  /// Different alignment for each row.
+  const CellAlignments.variableRowAlignment({
+    /// Different alignment for each row (for content only).
+    /// Length of list must match rowsLength.
+    @required this.rowAlignments,
+
+    /// Different alignment for each sticky column cell.
+    /// Length of list must match rowsLength.
+    @required this.stickyColumnAlignments,
+
+    /// Same alignment for each sticky row cell.
+    @required this.stickyRowAlignment,
+
+    /// Alignment for the sticky legend cell.
+    @required this.stickyLegendAlignment,
+  })  : contentCellAlignment = null,
+        columnAlignments = null,
+        contentCellAlignments = null,
+        stickyRowAlignments = null,
+        stickyColumnAlignment = null;
+
+  /// Different alignment for every cell.
+  const CellAlignments.variable({
+    /// Different alignment for each content cell.
+    /// Dimensions of array must match rowsLength x columnsLength.
+    @required this.contentCellAlignments,
+
+    /// Different alignment for each sticky column cell.
+    /// Length of list must match rowsLength.
+    @required this.stickyColumnAlignments,
+
+    /// Different alignment for each sticky row cell.
+    /// Length of list must match columnsLength.
+    @required this.stickyRowAlignments,
+
+    /// Alignment for the sticky legend cell.
+    @required this.stickyLegendAlignment,
+  })  : contentCellAlignment = null,
+        columnAlignments = null,
+        rowAlignments = null,
+        stickyColumnAlignment = null,
+        stickyRowAlignment = null;
+
+  final Alignment contentCellAlignment;
+  final List<Alignment> columnAlignments;
+  final List<Alignment> rowAlignments;
+  final List<List<Alignment>> contentCellAlignments;
+  final Alignment stickyColumnAlignment;
+  final List<Alignment> stickyColumnAlignments;
+  final Alignment stickyRowAlignment;
+  final List<Alignment> stickyRowAlignments;
+  final Alignment stickyLegendAlignment;
+
+  static const CellAlignments base = CellAlignments.uniform(Alignment.center);
 }
 
 /// SyncScrollController keeps scroll controllers in sync.
