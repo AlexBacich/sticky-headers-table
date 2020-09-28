@@ -16,11 +16,20 @@ For more advanced usage - decorate Text with other widgets like borders, cell co
 You can also wrap cell with tap listeners and add custom behavior on tap. Check tap_handler_example.dart.
 
 The cell dimensions can be customized using the cellDimensions property of StickyHeadersTable. Use:
-- CellDimensions.base for default fixed values.
-- CellDimensions.fixed for custom fixed width and height for each content cell.
-- CellDimensions.variableColumnWidth if you need different width for each column.
-- CellDimensions.variableRowHeight if you need different height for each row.
-- CellDimensions.variableColumnWidthAndRowHeight if you need different width for each column and different height for each row.
+- CellDimensions.base: Default fixed values.
+- CellDimensions.uniform: Same dimensions for each cell.
+- CellDimensions.fixed: Custom fixed width and height for each content cell.
+- CellDimensions.variableColumnWidth: Different width for each column.
+- CellDimensions.variableRowHeight: Different height for each row.
+- CellDimensions.variableColumnWidthAndRowHeight: Different width for each column and different height for each row.
+
+The alignment of the cell contents can be customized using the cellAlignments property of StickyHeadersTable. Use:
+- CellAlignments.base: Default alignment value (Alignment.center).
+- CellAlignments.uniform: Same alignment for each cell.
+- CellAlignments.fixed: Same alignment for each content cell, but different alignment for the sticky column, row and legend.
+- CellAlignments.variableColumnAlignment: Different alignment for each column.
+- CellAlignments.variableRowAlignment: Different alignment for each row.
+- CellAlignments.variable: Different alignment for every cell.
   
 Feature requests and PRs are welcome.  
 
