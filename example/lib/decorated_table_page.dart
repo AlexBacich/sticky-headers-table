@@ -4,8 +4,8 @@ import 'package:table_sticky_headers/table_sticky_headers.dart';
 class DecoratedTablePage extends StatelessWidget {
   DecoratedTablePage(
       {@required this.data,
-        @required this.titleColumn,
-        @required this.titleRow});
+      @required this.titleColumn,
+      @required this.titleRow});
 
   final List<List<String>> data;
   final List<String> titleColumn;
@@ -49,12 +49,12 @@ class DecoratedTablePage extends StatelessWidget {
 
 class TableCell extends StatelessWidget {
   TableCell.content(
-      this.text, {
-        this.textStyle,
-        this.cellDimensions = CellDimensions.base,
-        this.colorBg = Colors.white,
-        this.onTap,
-      })  : cellWidth = cellDimensions.contentCellWidth,
+    this.text, {
+    this.textStyle,
+    this.cellDimensions = CellDimensions.base,
+    this.colorBg = Colors.white,
+    this.onTap,
+  })  : cellWidth = cellDimensions.contentCellWidth,
         cellHeight = cellDimensions.contentCellHeight,
         _colorHorizontalBorder = Colors.amber,
         _colorVerticalBorder = Colors.black38,
@@ -62,12 +62,12 @@ class TableCell extends StatelessWidget {
         _padding = EdgeInsets.zero;
 
   TableCell.legend(
-      this.text, {
-        this.textStyle,
-        this.cellDimensions = CellDimensions.base,
-        this.colorBg = Colors.amber,
-        this.onTap,
-      })  : cellWidth = cellDimensions.stickyLegendWidth,
+    this.text, {
+    this.textStyle,
+    this.cellDimensions = CellDimensions.base,
+    this.colorBg = Colors.amber,
+    this.onTap,
+  })  : cellWidth = cellDimensions.stickyLegendWidth,
         cellHeight = cellDimensions.stickyLegendHeight,
         _colorHorizontalBorder = Colors.white,
         _colorVerticalBorder = Colors.amber,
@@ -75,12 +75,12 @@ class TableCell extends StatelessWidget {
         _padding = EdgeInsets.only(left: 24.0);
 
   TableCell.stickyRow(
-      this.text, {
-        this.textStyle,
-        this.cellDimensions = CellDimensions.base,
-        this.colorBg = Colors.amber,
-        this.onTap,
-      })  : cellWidth = cellDimensions.contentCellWidth,
+    this.text, {
+    this.textStyle,
+    this.cellDimensions = CellDimensions.base,
+    this.colorBg = Colors.amber,
+    this.onTap,
+  })  : cellWidth = cellDimensions.contentCellWidth,
         cellHeight = cellDimensions.stickyLegendHeight,
         _colorHorizontalBorder = Colors.white,
         _colorVerticalBorder = Colors.amber,
@@ -88,12 +88,12 @@ class TableCell extends StatelessWidget {
         _padding = EdgeInsets.zero;
 
   TableCell.stickyColumn(
-      this.text, {
-        this.textStyle,
-        this.cellDimensions = CellDimensions.base,
-        this.colorBg = Colors.white,
-        this.onTap,
-      })  : cellWidth = cellDimensions.stickyLegendWidth,
+    this.text, {
+    this.textStyle,
+    this.cellDimensions = CellDimensions.base,
+    this.colorBg = Colors.white,
+    this.onTap,
+  })  : cellWidth = cellDimensions.stickyLegendWidth,
         cellHeight = cellDimensions.contentCellHeight,
         _colorHorizontalBorder = Colors.amber,
         _colorVerticalBorder = Colors.black38,
@@ -156,4 +156,3 @@ class TableCell extends StatelessWidget {
     );
   }
 }
-

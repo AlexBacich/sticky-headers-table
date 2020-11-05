@@ -11,7 +11,6 @@ void main() {
   );
 }
 
-
 class LandingPage extends StatefulWidget {
   final columns = 10;
   final rows = 20;
@@ -34,16 +33,15 @@ class LandingPage extends StatefulWidget {
   /// Simple generator for row title
   List<String> makeTitleRow() => List.generate(rows, (i) => 'Left $i');
 
-
   @override
   _LandingPageState createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
-  
   int _selectedIndex = 0;
+
   Widget _widgetOptions(int index) {
-    switch (index){
+    switch (index) {
       case 0:
         return SimpleTablePage(
           titleColumn: widget.makeTitleColumn(),
@@ -102,5 +100,3 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 }
-
-
