@@ -1,39 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
-void main() {
-  final columns = 10;
-  final rows = 20;
-
-  List<List<String>> _makeData() {
-    final List<List<String>> output = [];
-    for (int i = 0; i < columns; i++) {
-      final List<String> row = [];
-      for (int j = 0; j < rows; j++) {
-        row.add('T$i : L$j');
-      }
-      output.add(row);
-    }
-    return output;
-  }
-
-  /// Simple generator for column title
-  List<String> _makeTitleColumn() => List.generate(columns, (i) => 'Top $i');
-
-  /// Simple generator for row title
-  List<String> _makeTitleRow() => List.generate(rows, (i) => 'Left $i');
-
-  runApp(
-    TableDecorated(
-      titleColumn: _makeTitleColumn(),
-      titleRow: _makeTitleRow(),
-      data: _makeData(),
-    ),
-  );
-}
-
-class TableDecorated extends StatelessWidget {
-  TableDecorated(
+class DecoratedTablePage extends StatelessWidget {
+  DecoratedTablePage(
       {@required this.data,
         @required this.titleColumn,
         @required this.titleRow});
@@ -46,34 +15,32 @@ class TableDecorated extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Sticky Headers Two-Dimension  Table decorated',
-            maxLines: 2,
-          ),
-          backgroundColor: Colors.amber,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Sticky Headers Two-Dimension  Table decorated',
+          maxLines: 2,
         ),
-        body: StickyHeadersTable(
-          columnsLength: titleColumn.length,
-          rowsLength: titleRow.length,
-          columnsTitleBuilder: (i) => TableCell.stickyRow(
-            titleColumn[i],
-            textStyle: textTheme.button.copyWith(fontSize: 15.0),
-          ),
-          rowsTitleBuilder: (i) => TableCell.stickyColumn(
-            titleRow[i],
-            textStyle: textTheme.button.copyWith(fontSize: 15.0),
-          ),
-          contentCellBuilder: (i, j) => TableCell.content(
-            data[i][j],
-            textStyle: textTheme.body2.copyWith(fontSize: 12.0),
-          ),
-          legendCell: TableCell.legend(
-            'Sticky Legend',
-            textStyle: textTheme.button.copyWith(fontSize: 16.5),
-          ),
+        backgroundColor: Colors.amber,
+      ),
+      body: StickyHeadersTable(
+        columnsLength: titleColumn.length,
+        rowsLength: titleRow.length,
+        columnsTitleBuilder: (i) => TableCell.stickyRow(
+          titleColumn[i],
+          textStyle: textTheme.button.copyWith(fontSize: 15.0),
+        ),
+        rowsTitleBuilder: (i) => TableCell.stickyColumn(
+          titleRow[i],
+          textStyle: textTheme.button.copyWith(fontSize: 15.0),
+        ),
+        contentCellBuilder: (i, j) => TableCell.content(
+          data[i][j],
+          textStyle: textTheme.bodyText2.copyWith(fontSize: 12.0),
+        ),
+        legendCell: TableCell.legend(
+          'Sticky Legend',
+          textStyle: textTheme.button.copyWith(fontSize: 16.5),
         ),
       ),
     );

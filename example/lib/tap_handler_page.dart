@@ -1,39 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
-void main() {
-  final columns = 10;
-  final rows = 20;
-
-  List<List<String>> _makeData() {
-    final List<List<String>> output = [];
-    for (int i = 0; i < columns; i++) {
-      final List<String> row = [];
-      for (int j = 0; j < rows; j++) {
-        row.add('T$i : L$j');
-      }
-      output.add(row);
-    }
-    return output;
-  }
-
-  /// Simple generator for column title
-  List<String> _makeTitleColumn() => List.generate(columns, (i) => 'Top $i');
-
-  /// Simple generator for row title
-  List<String> _makeTitleRow() => List.generate(rows, (i) => 'Left $i');
-
-  runApp(
-    TableTapHandlerHighlightSelectedCell(
-      titleColumn: _makeTitleColumn(),
-      titleRow: _makeTitleRow(),
-      data: _makeData(),
-    ),
-  );
-}
-
-class TableTapHandlerHighlightSelectedCell extends StatefulWidget {
-  TableTapHandlerHighlightSelectedCell(
+class TapHandlerPage extends StatefulWidget {
+  TapHandlerPage(
       {@required this.data,
         @required this.titleColumn,
         @required this.titleRow});
@@ -43,12 +12,12 @@ class TableTapHandlerHighlightSelectedCell extends StatefulWidget {
   final List<String> titleRow;
 
   @override
-  _TableTapHandlerHighlightSelectedCellState createState() =>
-      _TableTapHandlerHighlightSelectedCellState();
+  _TapHandlerPageState createState() =>
+      _TapHandlerPageState();
 }
 
-class _TableTapHandlerHighlightSelectedCellState
-    extends State<TableTapHandlerHighlightSelectedCell> {
+class _TapHandlerPageState
+    extends State<TapHandlerPage> {
   int selectedRow;
   int selectedColumn;
 

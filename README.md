@@ -33,7 +33,7 @@ The alignment of the cell contents can be customized using the cellAlignments pr
   
 Feature requests and PRs are welcome.  
 
-![Пример работы](https://github.com/AlexBacich/sticky-headers-table/blob/master/example/sticky_demo.gif?raw=true)
+![Examples](https://github.com/AlexBacich/sticky-headers-table/blob/master/example/sticky_demo.gif?raw=true)
 
 
 Widget usage example:
