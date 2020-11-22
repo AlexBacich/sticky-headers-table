@@ -37,6 +37,12 @@ class StickyHeadersTable extends StatefulWidget {
 
     /// Type of fit for content
     this.cellFit = BoxFit.scaleDown,
+
+    /// Callbacks for when pressing a cell
+    this.onStickyLegendPressed,
+    this.onColumnTitlePressed,
+    this.onRowTitlePressed,
+    this.onContentCellPressed,
   }) : super(key: key) {
     assert(columnsLength != null);
     assert(rowsLength != null);
@@ -85,12 +91,16 @@ class StickyHeadersTable extends StatefulWidget {
   final int rowsLength;
   final int columnsLength;
   final Widget legendCell;
-  final Widget Function(int colulmnIndex) columnsTitleBuilder;
+  final Widget Function(int columnIndex) columnsTitleBuilder;
   final Widget Function(int rowIndex) rowsTitleBuilder;
   final Widget Function(int columnIndex, int rowIndex) contentCellBuilder;
   final CellDimensions cellDimensions;
   final CellAlignments cellAlignments;
   final BoxFit cellFit;
+  final Function onStickyLegendPressed;
+  final Function(int columnIndex) onColumnTitlePressed;
+  final Function(int rowIndex) onRowTitlePressed;
+  final Function(int columnIndex, int rowIndex) onContentCellPressed;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
@@ -122,13 +132,17 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
         Row(
           children: <Widget>[
             // STICKY LEGEND
-            Container(
-              width: widget.cellDimensions.stickyLegendWidth,
-              height: widget.cellDimensions.stickyLegendHeight,
-              alignment: widget.cellAlignments.stickyLegendAlignment,
-              child: FittedBox(
-                fit: widget.cellFit,
-                child: widget.legendCell,
+            GestureDetector(
+              onTap: widget.onStickyLegendPressed ?? null,
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                width: widget.cellDimensions.stickyLegendWidth,
+                height: widget.cellDimensions.stickyLegendHeight,
+                alignment: widget.cellAlignments.stickyLegendAlignment,
+                child: FittedBox(
+                  fit: widget.cellFit,
+                  child: widget.legendCell,
+                ),
               ),
             ),
             // STICKY ROW
@@ -140,18 +154,24 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(
                       widget.columnsLength,
-                      (i) => Container(
-                        width: widget.cellDimensions.columnWidths != null
-                            ? widget.cellDimensions.columnWidths[i]
-                            : widget.cellDimensions.contentCellWidth,
-                        height: widget.cellDimensions.stickyLegendHeight,
-                        alignment:
-                            widget.cellAlignments.stickyRowAlignments != null
-                                ? widget.cellAlignments.stickyRowAlignments[i]
-                                : widget.cellAlignments.stickyRowAlignment,
-                        child: FittedBox(
-                          fit: widget.cellFit,
-                          child: widget.columnsTitleBuilder(i),
+                      (i) => GestureDetector(
+                        onTap: widget.onColumnTitlePressed != null
+                            ? () => widget.onColumnTitlePressed(i)
+                            : () => null,
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          width: widget.cellDimensions.columnWidths != null
+                              ? widget.cellDimensions.columnWidths[i]
+                              : widget.cellDimensions.contentCellWidth,
+                          height: widget.cellDimensions.stickyLegendHeight,
+                          alignment:
+                              widget.cellAlignments.stickyRowAlignments != null
+                                  ? widget.cellAlignments.stickyRowAlignments[i]
+                                  : widget.cellAlignments.stickyRowAlignment,
+                          child: FittedBox(
+                            fit: widget.cellFit,
+                            child: widget.columnsTitleBuilder(i),
+                          ),
                         ),
                       ),
                     ),
@@ -177,19 +197,25 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                   child: Column(
                     children: List.generate(
                       widget.rowsLength,
-                      (i) => Container(
-                        width: widget.cellDimensions.stickyLegendWidth,
-                        height: widget.cellDimensions.rowHeights != null
-                            ? widget.cellDimensions.rowHeights[i]
-                            : widget.cellDimensions.contentCellHeight,
-                        alignment:
-                            widget.cellAlignments.stickyColumnAlignments != null
-                                ? widget
-                                    .cellAlignments.stickyColumnAlignments[i]
-                                : widget.cellAlignments.stickyColumnAlignment,
-                        child: FittedBox(
-                          fit: widget.cellFit,
-                          child: widget.rowsTitleBuilder(i),
+                      (i) => GestureDetector(
+                        onTap: widget.onRowTitlePressed != null
+                            ? () => widget.onRowTitlePressed(i)
+                            : () => null,
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          width: widget.cellDimensions.stickyLegendWidth,
+                          height: widget.cellDimensions.rowHeights != null
+                              ? widget.cellDimensions.rowHeights[i]
+                              : widget.cellDimensions.contentCellHeight,
+                          alignment: widget
+                                      .cellAlignments.stickyColumnAlignments !=
+                                  null
+                              ? widget.cellAlignments.stickyColumnAlignments[i]
+                              : widget.cellAlignments.stickyColumnAlignment,
+                          child: FittedBox(
+                            fit: widget.cellFit,
+                            child: widget.rowsTitleBuilder(i),
+                          ),
                         ),
                       ),
                     ),
@@ -222,43 +248,53 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                               (int i) => Row(
                                 children: List.generate(
                                   widget.columnsLength,
-                                  (int j) => Container(
-                                    width: widget.cellDimensions.columnWidths !=
-                                            null
-                                        ? widget.cellDimensions.columnWidths[j]
-                                        : widget
-                                            .cellDimensions.contentCellWidth,
-                                    height: widget.cellDimensions.rowHeights !=
-                                            null
-                                        ? widget.cellDimensions.rowHeights[i]
-                                        : widget
-                                            .cellDimensions.contentCellHeight,
-                                    alignment: (() {
-                                      if (widget.cellAlignments
-                                              .contentCellAlignment !=
-                                          null) {
-                                        return widget.cellAlignments
-                                            .contentCellAlignment;
-                                      } else if (widget.cellAlignments
-                                              .columnAlignments !=
-                                          null) {
-                                        return widget
-                                            .cellAlignments.columnAlignments[j];
-                                      } else if (widget
-                                              .cellAlignments.rowAlignments !=
-                                          null) {
-                                        return widget
-                                            .cellAlignments.rowAlignments[i];
-                                      } else if (widget.cellAlignments
-                                              .contentCellAlignments !=
-                                          null) {
-                                        return widget.cellAlignments
-                                            .contentCellAlignments[i][j];
-                                      }
-                                    }()),
-                                    child: FittedBox(
-                                      fit: widget.cellFit,
-                                      child: widget.contentCellBuilder(j, i),
+                                  (int j) => GestureDetector(
+                                    onTap: widget.onContentCellPressed != null
+                                        ? () =>
+                                            widget.onContentCellPressed(j, i)
+                                        : () => null,
+                                    behavior: HitTestBehavior.opaque,
+                                    child: Container(
+                                      width:
+                                          widget.cellDimensions.columnWidths !=
+                                                  null
+                                              ? widget.cellDimensions
+                                                  .columnWidths[j]
+                                              : widget.cellDimensions
+                                                  .contentCellWidth,
+                                      height: widget
+                                                  .cellDimensions.rowHeights !=
+                                              null
+                                          ? widget.cellDimensions.rowHeights[i]
+                                          : widget
+                                              .cellDimensions.contentCellHeight,
+                                      alignment: (() {
+                                        if (widget.cellAlignments
+                                                .contentCellAlignment !=
+                                            null) {
+                                          return widget.cellAlignments
+                                              .contentCellAlignment;
+                                        } else if (widget.cellAlignments
+                                                .columnAlignments !=
+                                            null) {
+                                          return widget.cellAlignments
+                                              .columnAlignments[j];
+                                        } else if (widget
+                                                .cellAlignments.rowAlignments !=
+                                            null) {
+                                          return widget
+                                              .cellAlignments.rowAlignments[i];
+                                        } else if (widget.cellAlignments
+                                                .contentCellAlignments !=
+                                            null) {
+                                          return widget.cellAlignments
+                                              .contentCellAlignments[i][j];
+                                        }
+                                      }()),
+                                      child: FittedBox(
+                                        fit: widget.cellFit,
+                                        child: widget.contentCellBuilder(j, i),
+                                      ),
                                     ),
                                   ),
                                 ),
