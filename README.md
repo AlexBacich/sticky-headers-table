@@ -30,6 +30,12 @@ The alignment of the cell contents can be customized using the cellAlignments pr
 - CellAlignments.variableColumnAlignment: Different alignment for each column.
 - CellAlignments.variableRowAlignment: Different alignment for each row.
 - CellAlignments.variable: Different alignment for every cell.
+
+You can provide functions that execute when tapping a cell by setting the properties:
+- onStickyLegendPressed: () => print('Sticky legend pressed.'),
+- onColumnTitlePressed: (i) => print('Column $i title pressed.'),
+- onRowTitlePressed: (j) => print('Row $j title pressed.'),
+- onContentCellPressed: (i, j) => print('Cell at column $i, row $j pressed.'),
   
 Feature requests and PRs are welcome.  
 
