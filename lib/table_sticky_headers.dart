@@ -46,8 +46,8 @@ class StickyHeadersTable extends StatefulWidget {
     this.onContentCellPressed,
 
     /// Initial scroll offsets in X and Y directions
-    this.initialScrollOffsetX,
-    this.initialScrollOffsetY,
+    this.initialScrollOffsetX = 0.0,
+    this.initialScrollOffsetY = 0.0,
 
     /// Called when scrolling has ended, passing the current offset position
     this.onEndScrolling,
@@ -177,7 +177,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                     scrollNotification,
                     _horizontalTitleController,
                   );
-                  if (didEndScrolling) {
+                  if (didEndScrolling && widget.onEndScrolling != null) {
                     _scrollOffsetX = _horizontalTitleController.offset;
                     widget.onEndScrolling(_scrollOffsetX, _scrollOffsetY);
                   }
@@ -194,7 +194,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                         behavior: HitTestBehavior.opaque,
                         onTap: widget.onColumnTitlePressed != null
                             ? () => widget.onColumnTitlePressed(i)
-                            : () => null,
+                            : null,
                         child: Container(
                           width: widget.cellDimensions.columnWidths != null
                               ? widget.cellDimensions.columnWidths[i]
@@ -229,7 +229,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                     scrollNotification,
                     _verticalTitleController,
                   );
-                  if (didEndScrolling) {
+                  if (didEndScrolling && widget.onEndScrolling != null) {
                     _scrollOffsetY = _verticalTitleController.offset;
                     widget.onEndScrolling(_scrollOffsetX, _scrollOffsetY);
                   }
@@ -244,7 +244,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                         behavior: HitTestBehavior.opaque,
                         onTap: widget.onRowTitlePressed != null
                             ? () => widget.onRowTitlePressed(i)
-                            : () => null,
+                            : null,
                         child: Container(
                           width: widget.cellDimensions.stickyLegendWidth,
                           height: widget.cellDimensions.rowHeights != null
@@ -274,7 +274,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       scrollNotification,
                       _horizontalBodyController,
                     );
-                    if (didEndScrolling) {
+                    if (didEndScrolling && widget.onEndScrolling != null) {
                       _scrollOffsetX = _horizontalBodyController.offset;
                       widget.onEndScrolling(_scrollOffsetX, _scrollOffsetY);
                     }
@@ -290,7 +290,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                           scrollNotification,
                           _verticalBodyController,
                         );
-                        if (didEndScrolling) {
+                        if (didEndScrolling && widget.onEndScrolling != null) {
                           _scrollOffsetY = _verticalBodyController.offset;
                           widget.onEndScrolling(_scrollOffsetX, _scrollOffsetY);
                         }
@@ -308,7 +308,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                                   behavior: HitTestBehavior.opaque,
                                   onTap: widget.onContentCellPressed != null
                                       ? () => widget.onContentCellPressed(j, i)
-                                      : () => null,
+                                      : null,
                                   child: Container(
                                     width: widget.cellDimensions.columnWidths !=
                                             null
