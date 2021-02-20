@@ -37,7 +37,11 @@ class StickyHeadersTable extends StatefulWidget {
 
     /// Type of fit for content
     this.cellFit = BoxFit.scaleDown,
-  }) : super(key: key) {
+
+    /// Scroll controllers for the table
+    ScrollControllers scrollControllers,
+  })  : this.scrollControllers = scrollControllers ?? ScrollControllers(),
+        super(key: key) {
     assert(columnsLength != null);
     assert(rowsLength != null);
     assert(columnsTitleBuilder != null);
@@ -91,28 +95,27 @@ class StickyHeadersTable extends StatefulWidget {
   final CellDimensions cellDimensions;
   final CellAlignments cellAlignments;
   final BoxFit cellFit;
+  final ScrollControllers scrollControllers;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
 }
 
 class _StickyHeadersTableState extends State<StickyHeadersTable> {
-  final ScrollController _verticalTitleController = ScrollController();
-  final ScrollController _verticalBodyController = ScrollController();
-
-  final ScrollController _horizontalBodyController = ScrollController();
-  final ScrollController _horizontalTitleController = ScrollController();
-
   _SyncScrollController _verticalSyncController;
   _SyncScrollController _horizontalSyncController;
 
   @override
   void initState() {
     super.initState();
-    _verticalSyncController = _SyncScrollController(
-        [_verticalTitleController, _verticalBodyController]);
-    _horizontalSyncController = _SyncScrollController(
-        [_horizontalTitleController, _horizontalBodyController]);
+    _verticalSyncController = _SyncScrollController([
+      widget.scrollControllers._verticalTitleController,
+      widget.scrollControllers._verticalBodyController,
+    ]);
+    _horizontalSyncController = _SyncScrollController([
+      widget.scrollControllers._horizontalTitleController,
+      widget.scrollControllers._horizontalBodyController,
+    ]);
   }
 
   @override
@@ -156,11 +159,11 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       ),
                     ),
                   ),
-                  controller: _horizontalTitleController,
+                  controller: widget.scrollControllers._horizontalTitleController,
                 ),
                 onNotification: (ScrollNotification notification) {
                   _horizontalSyncController.processNotification(
-                      notification, _horizontalTitleController);
+                      notification, widget.scrollControllers._horizontalTitleController);
                   return true;
                 },
               ),
@@ -194,11 +197,11 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       ),
                     ),
                   ),
-                  controller: _verticalTitleController,
+                  controller: widget.scrollControllers._verticalTitleController,
                 ),
                 onNotification: (ScrollNotification notification) {
                   _verticalSyncController.processNotification(
-                      notification, _verticalTitleController);
+                      notification, widget.scrollControllers._verticalTitleController);
                   return true;
                 },
               ),
@@ -207,15 +210,15 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification notification) {
                     _horizontalSyncController.processNotification(
-                        notification, _horizontalBodyController);
+                        notification, widget.scrollControllers._horizontalBodyController);
                     return true;
                   },
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    controller: _horizontalBodyController,
+                    controller: widget.scrollControllers._horizontalBodyController,
                     child: NotificationListener<ScrollNotification>(
                       child: SingleChildScrollView(
-                          controller: _verticalBodyController,
+                          controller: widget.scrollControllers._verticalBodyController,
                           child: Column(
                             children: List.generate(
                               widget.rowsLength,
@@ -267,7 +270,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                           )),
                       onNotification: (ScrollNotification notification) {
                         _verticalSyncController.processNotification(
-                            notification, _verticalBodyController);
+                            notification, widget.scrollControllers._verticalBodyController);
                         return true;
                       },
                     ),
@@ -501,6 +504,28 @@ class CellAlignments {
   final Alignment stickyLegendAlignment;
 
   static const CellAlignments base = CellAlignments.uniform(Alignment.center);
+}
+
+class ScrollControllers {
+  final ScrollController _verticalTitleController;
+  final ScrollController _verticalBodyController;
+
+  final ScrollController _horizontalBodyController;
+  final ScrollController _horizontalTitleController;
+
+  ScrollControllers({
+    ScrollController verticalTitleController,
+    ScrollController verticalBodyController,
+    ScrollController horizontalBodyController,
+    ScrollController horizontalTitleController,
+  })  : this._verticalTitleController =
+            verticalTitleController ?? ScrollController(),
+        this._verticalBodyController =
+            verticalBodyController ?? ScrollController(),
+        this._horizontalBodyController =
+            horizontalBodyController ?? ScrollController(),
+        this._horizontalTitleController =
+            horizontalTitleController ?? ScrollController();
 }
 
 /// SyncScrollController keeps scroll controllers in sync.
