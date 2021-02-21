@@ -30,6 +30,8 @@ The alignment of the cell contents can be customized using the cellAlignments pr
 - CellAlignments.variableColumnAlignment: Different alignment for each column.
 - CellAlignments.variableRowAlignment: Different alignment for each row.
 - CellAlignments.variable: Different alignment for every cell.
+
+You can also define a custom set of scroll controllers for both title and body with the ```scrollControllers``` property
   
 Feature requests and PRs are welcome.  
 
