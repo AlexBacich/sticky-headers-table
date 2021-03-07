@@ -4,7 +4,7 @@ author: Alex Babich <ababich84@gmail.com>
 homepage: https://github.com/AlexBacich/sticky-headers-table
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:

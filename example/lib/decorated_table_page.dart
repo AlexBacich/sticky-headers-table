@@ -3,9 +3,9 @@ import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class DecoratedTablePage extends StatelessWidget {
   DecoratedTablePage(
-      {@required this.data,
-      @required this.titleColumn,
-      @required this.titleRow});
+      {required this.data,
+      required this.titleColumn,
+      required this.titleRow});
 
   final List<List<String>> data;
   final List<String> titleColumn;
@@ -28,19 +28,19 @@ class DecoratedTablePage extends StatelessWidget {
         rowsLength: titleRow.length,
         columnsTitleBuilder: (i) => TableCell.stickyRow(
           titleColumn[i],
-          textStyle: textTheme.button.copyWith(fontSize: 15.0),
+          textStyle: textTheme.button!.copyWith(fontSize: 15.0),
         ),
         rowsTitleBuilder: (i) => TableCell.stickyColumn(
           titleRow[i],
-          textStyle: textTheme.button.copyWith(fontSize: 15.0),
+          textStyle: textTheme.button!.copyWith(fontSize: 15.0),
         ),
         contentCellBuilder: (i, j) => TableCell.content(
           data[i][j],
-          textStyle: textTheme.bodyText2.copyWith(fontSize: 12.0),
+          textStyle: textTheme.bodyText2!.copyWith(fontSize: 12.0),
         ),
         legendCell: TableCell.legend(
           'Sticky Legend',
-          textStyle: textTheme.button.copyWith(fontSize: 16.5),
+          textStyle: textTheme.button!.copyWith(fontSize: 16.5),
         ),
       ),
     );
@@ -103,10 +103,10 @@ class TableCell extends StatelessWidget {
   final CellDimensions cellDimensions;
 
   final String text;
-  final Function onTap;
+  final Function()? onTap;
 
-  final double cellWidth;
-  final double cellHeight;
+  final double? cellWidth;
+  final double? cellHeight;
 
   final Color colorBg;
   final Color _colorHorizontalBorder;
@@ -115,7 +115,7 @@ class TableCell extends StatelessWidget {
   final TextAlign _textAlign;
   final EdgeInsets _padding;
 
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {

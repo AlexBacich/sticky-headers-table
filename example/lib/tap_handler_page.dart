@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class TapHandlerPage extends StatefulWidget {
-  TapHandlerPage(
-      {@required this.data,
-      @required this.titleColumn,
-      @required this.titleRow});
+  TapHandlerPage({required this.data, required this.titleColumn, required this.titleRow});
 
   final List<List<String>> data;
   final List<String> titleColumn;
@@ -16,8 +13,8 @@ class TapHandlerPage extends StatefulWidget {
 }
 
 class _TapHandlerPageState extends State<TapHandlerPage> {
-  int selectedRow;
-  int selectedColumn;
+  int? selectedRow;
+  int? selectedColumn;
 
   Color getContentColor(int i, int j) {
     if (i == selectedRow && j == selectedColumn) {
@@ -47,23 +44,30 @@ class _TapHandlerPageState extends State<TapHandlerPage> {
           body: StickyHeadersTable(
             columnsLength: widget.titleColumn.length,
             rowsLength: widget.titleRow.length,
-            columnsTitleBuilder: (i) => FlatButton(
+            columnsTitleBuilder: (i) => TextButton(
               child: Text(widget.titleColumn[i]),
               onPressed: clearState,
             ),
-            rowsTitleBuilder: (i) => FlatButton(
+            rowsTitleBuilder: (i) => TextButton(
               child: Text(widget.titleRow[i]),
               onPressed: clearState,
             ),
-            contentCellBuilder: (i, j) => FlatButton(
-              child: Text(widget.data[i][j]),
-              color: getContentColor(i, j),
+            contentCellBuilder: (i, j) => ElevatedButton(
+              child: Text(
+                widget.data[i][j],
+                style: TextStyle(color: Colors.black),
+              ),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(getContentColor(i, j)),
+                elevation: MaterialStateProperty.all(0),
+                padding: MaterialStateProperty.all(EdgeInsets.zero)
+              ),
               onPressed: () => setState(() {
                 selectedColumn = j;
                 selectedRow = i;
               }),
             ),
-            legendCell: FlatButton(
+            legendCell: TextButton(
               child: Text('Sticky Legend'),
               onPressed: clearState,
             ),

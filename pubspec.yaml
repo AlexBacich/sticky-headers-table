@@ -1,10 +1,10 @@
 name: table_sticky_headers
 description: Two-dimension table with both sticky headers. You may scroll left \ right and top \ bottom. Sticky headers always stay visible. Legend cell (top left) always visible too.
-version: 1.2.0
+version: 2.0.0
 homepage: https://github.com/AlexBacich/sticky-headers-table
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:

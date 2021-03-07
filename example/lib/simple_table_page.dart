@@ -3,9 +3,9 @@ import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class SimpleTablePage extends StatelessWidget {
   SimpleTablePage(
-      {@required this.data,
-      @required this.titleColumn,
-      @required this.titleRow});
+      {required this.data,
+      required this.titleColumn,
+      required this.titleRow});
 
   final List<List<String>> data;
   final List<String> titleColumn;
