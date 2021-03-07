@@ -120,11 +120,15 @@ class CellAlignments {
   }
 
   Alignment? rowAlignment(int i) {
-    return stickyRowAlignments != null ? stickyRowAlignments![i] : stickyRowAlignment;
+    return stickyRowAlignments != null
+        ? stickyRowAlignments![i]
+        : stickyRowAlignment;
   }
 
   Alignment? columnAlignment(int i) {
-    return stickyColumnAlignments != null ? stickyColumnAlignments![i] : stickyColumnAlignment;
+    return stickyColumnAlignments != null
+        ? stickyColumnAlignments![i]
+        : stickyColumnAlignment;
   }
 
   void runAssertions(int rowsLength, int columnsLength) {

@@ -20,7 +20,7 @@ class LandingPage extends StatefulWidget {
     for (int i = 0; i < columns; i++) {
       final List<String> row = [];
       for (int j = 0; j < rows; j++) {
-        row.add('T$i : L$j');
+        row.add('L$j : T$i');
       }
       output.add(row);
     }

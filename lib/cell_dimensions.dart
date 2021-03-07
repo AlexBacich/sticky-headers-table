@@ -113,14 +113,21 @@ class CellDimensions {
   final double stickyLegendHeight;
 
   Size contentSize(int i, int j) {
-    final width = (columnWidths != null ? columnWidths![j] : contentCellWidth) ?? base.contentCellWidth!;
-    final height = (rowHeights != null ? rowHeights![i] : contentCellHeight) ?? base.contentCellHeight!;
+    final width =
+        (columnWidths != null ? columnWidths![j] : contentCellWidth) ??
+            base.contentCellWidth!;
+    final height = (rowHeights != null ? rowHeights![i] : contentCellHeight) ??
+        base.contentCellHeight!;
     return Size(width, height);
   }
 
-  double stickyWidth(int i) => (columnWidths != null ? columnWidths![i] : contentCellWidth) ?? base.contentCellWidth!;
+  double stickyWidth(int i) =>
+      (columnWidths != null ? columnWidths![i] : contentCellWidth) ??
+      base.contentCellWidth!;
 
-  double stickyHeight(int i) => (rowHeights != null ? rowHeights![i] : contentCellHeight) ?? base.contentCellHeight!;
+  double stickyHeight(int i) =>
+      (rowHeights != null ? rowHeights![i] : contentCellHeight) ??
+      base.contentCellHeight!;
 
   void runAssertions(int rowsLength, int columnsLength) {
     assert(contentCellWidth != null || columnWidths != null);

@@ -3,9 +3,7 @@ import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class DecoratedTablePage extends StatelessWidget {
   DecoratedTablePage(
-      {required this.data,
-      required this.titleColumn,
-      required this.titleRow});
+      {required this.data, required this.titleColumn, required this.titleRow});
 
   final List<List<String>> data;
   final List<String> titleColumn;
