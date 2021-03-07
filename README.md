@@ -30,11 +30,39 @@ The alignment of the cell contents can be customized using the cellAlignments pr
 - CellAlignments.variableColumnAlignment: Different alignment for each column.
 - CellAlignments.variableRowAlignment: Different alignment for each row.
 - CellAlignments.variable: Different alignment for every cell.
+
+You can provide functions that execute when tapping a cell by setting the properties:
+- onStickyLegendPressed: () => print('Sticky legend pressed.'),
+- onColumnTitlePressed: (i) => print('Column $i title pressed.'),
+- onRowTitlePressed: (j) => print('Row $j title pressed.'),
+- onContentCellPressed: (i, j) => print('Cell at column $i, row $j pressed.'),
+
+The initial scroll offset of the table in the x and y directions can be set by using the properties:
+- initialScrollOffsetX
+- initialScrollOffsetY
+
+You can also set a callback for when the scrolling ends by setting the onEndScrolling property.
+
+By combining the two above features, you can return to the previous scroll position after a rebuild. See example below:
+
+```dart
+double _scrollOffsetX = 0.0;
+double _scrollOffsetY = 0.0;
+
+StickyHeadersTable(
+  // ... other properties ...
+  initialScrollOffsetX: _scrollOffsetX,
+  initialScrollOffsetY: _scrollOffsetY,
+  onEndScrolling: (scrollOffsetX, scrollOffsetY) {
+    _scrollOffsetX = scrollOffsetX;
+    _scrollOffsetY = scrollOffsetY;
+  },
+)
+```
   
 Feature requests and PRs are welcome.  
 
 ![Examples](https://github.com/AlexBacich/sticky-headers-table/blob/master/example/sticky_demo.gif?raw=true)
-
 
 Widget usage example:
 ```dart
