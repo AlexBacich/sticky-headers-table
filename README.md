@@ -59,6 +59,8 @@ StickyHeadersTable(
   },
 )
 ```
+
+You can also define a custom set of scroll controllers for both title and body with the ```scrollControllers``` property
   
 Feature requests and PRs are welcome.  
 
