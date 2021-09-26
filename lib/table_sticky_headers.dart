@@ -142,6 +142,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
+                  reverse: widget.tableDirection == TextDirection.rtl,
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -223,6 +224,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               Expanded(
                 child: NotificationListener<ScrollNotification>(
                   child: SingleChildScrollView(
+                    reverse: widget.tableDirection == TextDirection.rtl,
                     scrollDirection: Axis.horizontal,
                     controller:
                         widget.scrollControllers._horizontalBodyController,
