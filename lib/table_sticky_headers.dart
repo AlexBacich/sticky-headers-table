@@ -57,6 +57,9 @@ class StickyHeadersTable extends StatefulWidget {
 
     /// Scroll controllers for the table
     ScrollControllers? scrollControllers,
+
+    /// Table Direction to support RTL languages
+    this.tableDirection = TextDirection.ltr,
   })  : this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),
         this.onColumnTitlePressed = onColumnTitlePressed ?? ((_) {}),
@@ -83,6 +86,7 @@ class StickyHeadersTable extends StatefulWidget {
   final double initialScrollOffsetY;
   final Function(double x, double y)? onEndScrolling;
   final ScrollControllers scrollControllers;
+  final TextDirection tableDirection;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
@@ -121,6 +125,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
     return Column(
       children: <Widget>[
         Row(
+          textDirection: widget.tableDirection,
           children: <Widget>[
             // STICKY LEGEND
             GestureDetector(
@@ -140,6 +145,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    textDirection: widget.tableDirection,
                     children: List.generate(
                       widget.columnsLength,
                       (i) => GestureDetector(
@@ -177,6 +183,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            textDirection: widget.tableDirection,
             children: <Widget>[
               // STICKY COLUMN
               NotificationListener<ScrollNotification>(
@@ -227,6 +234,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                           children: List.generate(
                             widget.rowsLength,
                             (int rowIdx) => Row(
+                              textDirection: widget.tableDirection,
                               children: List.generate(
                                 widget.columnsLength,
                                 (int columnIdx) => GestureDetector(
