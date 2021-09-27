@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'simple_table_page.dart';
+//import 'rtl_simple_table_page.dart';
 import 'tap_handler_page.dart';
 import 'decorated_table_page.dart';
 
@@ -39,27 +40,37 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
+  TextDirection _textDirection = TextDirection.ltr;
 
   Widget _widgetOptions(int index) {
     switch (index) {
       case 0:
         return SimpleTablePage(
+          textDirection: _textDirection,
           titleColumn: widget.makeTitleColumn(),
           titleRow: widget.makeTitleRow(),
           data: widget.makeData(),
         );
       case 1:
         return TapHandlerPage(
+          textDirection: _textDirection,
           titleColumn: widget.makeTitleColumn(),
           titleRow: widget.makeTitleRow(),
           data: widget.makeData(),
         );
       case 2:
         return DecoratedTablePage(
+          textDirection: _textDirection,
           titleColumn: widget.makeTitleColumn(),
           titleRow: widget.makeTitleRow(),
           data: widget.makeData(),
         );
+      /*case 3:
+        return RtlSimpleTablePage(
+          titleColumn: widget.makeTitleColumn(),
+          titleRow: widget.makeTitleRow(),
+          data: widget.makeData(),
+        );*/
       default:
         print('$index not supported');
         return Container();
@@ -75,15 +86,34 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions(_selectedIndex),
-      ),
+      body: Column(textDirection: TextDirection.ltr, children: [
+        Expanded(
+          child: Center(
+            child: _widgetOptions(_selectedIndex),
+          ),
+        ),
+        FloatingActionButton(
+            child: Text('RTL'),
+            onPressed: () {
+              setState(() {
+                if (_textDirection == TextDirection.ltr)
+                  _textDirection = TextDirection.rtl;
+                else
+                  _textDirection = TextDirection.ltr;
+              });
+            })
+      ]),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Container(),
             label: 'Simple',
           ),
+          /*
+          BottomNavigationBarItem(
+            icon: Container(),
+            label: 'RTL',
+          ),*/
           BottomNavigationBarItem(
             icon: Container(),
             label: 'Tap Handler',

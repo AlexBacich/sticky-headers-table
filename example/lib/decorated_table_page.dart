@@ -3,11 +3,12 @@ import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class DecoratedTablePage extends StatelessWidget {
   DecoratedTablePage(
-      {required this.data, required this.titleColumn, required this.titleRow});
+      {required this.data, required this.titleColumn, required this.titleRow, this.textDirection = TextDirection.ltr});
 
   final List<List<String>> data;
   final List<String> titleColumn;
   final List<String> titleRow;
+  final TextDirection textDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class DecoratedTablePage extends StatelessWidget {
         backgroundColor: Colors.amber,
       ),
       body: StickyHeadersTable(
+        tableDirection: textDirection,
         columnsLength: titleColumn.length,
         rowsLength: titleRow.length,
         columnsTitleBuilder: (i) => TableCell.stickyRow(

@@ -3,11 +3,12 @@ import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class TapHandlerPage extends StatefulWidget {
   TapHandlerPage(
-      {required this.data, required this.titleColumn, required this.titleRow});
+      {required this.data, required this.titleColumn, required this.titleRow, this.textDirection = TextDirection.ltr});
 
   final List<List<String>> data;
   final List<String> titleColumn;
   final List<String> titleRow;
+  final TextDirection textDirection;
 
   @override
   _TapHandlerPageState createState() => _TapHandlerPageState();
@@ -43,6 +44,7 @@ class _TapHandlerPageState extends State<TapHandlerPage> {
             backgroundColor: Colors.amber,
           ),
           body: StickyHeadersTable(
+            tableDirection: widget.textDirection,
             columnsLength: widget.titleColumn.length,
             rowsLength: widget.titleRow.length,
             columnsTitleBuilder: (i) => TextButton(
