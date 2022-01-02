@@ -1,5 +1,8 @@
 # table_sticky_headers
 
+This Package is a fork from [Alex Bacich](https://github.com/AlexBacich/sticky-headers-table). 
+I Fixed it's bugs cause it's main contributors haven't fixed them.
+
 This package for [Flutter](https://flutter.io) allows you to display two-dimension table with both sticky headers.
 
 Key of this package is sticky headers. You can scroll table any direction and headers (top and left) will always stay. 
@@ -64,7 +67,7 @@ You can also define a custom set of scroll controllers for both title and body w
   
 Feature requests and PRs are welcome.  
 
-![Examples](https://github.com/AlexBacich/sticky-headers-table/blob/master/example/sticky_demo.gif?raw=true)
+![Examples](https://github.com/seena98/sticky-headers-table/blob/master/example/sticky_demo.gif?raw=true)
 
 Widget usage example:
 ```dart
@@ -86,7 +89,7 @@ Visit examples to see it in details
 
 ## Support
 
-Please file [issues and feature requests](https://github.com/AlexBacich/sticky-headers-table).
+Please file [issues and feature requests](https://github.com/seena98/sticky-headers-table).
 
 ## Getting Started
 
