@@ -100,6 +100,10 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
     super.initState();
     _scrollOffsetX = widget.initialScrollOffsetX;
     _scrollOffsetY = widget.initialScrollOffsetY;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     _verticalSyncController = _SyncScrollController([
       widget.scrollControllers._verticalTitleController,
       widget.scrollControllers._verticalBodyController,
@@ -108,10 +112,6 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
       widget.scrollControllers._horizontalTitleController,
       widget.scrollControllers._horizontalBodyController,
     ]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     SchedulerBinding.instance?.addPostFrameCallback((_) {
       widget.scrollControllers._horizontalTitleController
           .jumpTo(widget.initialScrollOffsetX);
