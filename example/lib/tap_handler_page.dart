@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:table_sticky_headers/table_sticky_headers.dart';
+import 'package:flutter_table/table_sticky_headers.dart';
 
 class TapHandlerPage extends StatefulWidget {
   TapHandlerPage(

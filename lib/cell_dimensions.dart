@@ -22,7 +22,7 @@ class CellDimensions {
 
     /// Sticky legend height. Also applied to sticky row height.
     required this.stickyLegendHeight,
-  })   : this.columnWidths = null,
+  })  : this.columnWidths = null,
         this.rowHeights = null;
 
   /// Same dimensions for each cell.
@@ -50,7 +50,7 @@ class CellDimensions {
 
     /// Sticky legend height. Also applied to sticky row height.
     required this.stickyLegendHeight,
-  })   : this.columnWidths = null,
+  })  : this.columnWidths = null,
         this.rowHeights = null;
 
   /// Different width for each column.
@@ -67,7 +67,7 @@ class CellDimensions {
 
     /// Sticky legend height. Also applied to sticky row height.
     required this.stickyLegendHeight,
-  })   : this.contentCellWidth = null,
+  })  : this.contentCellWidth = null,
         this.rowHeights = null;
 
   /// Different height for each row.
@@ -84,7 +84,7 @@ class CellDimensions {
 
     /// Sticky legend height. Also applied to sticky row height.
     required this.stickyLegendHeight,
-  })   : this.columnWidths = null,
+  })  : this.columnWidths = null,
         this.contentCellHeight = null;
 
   /// Different width for each column and different height for each row.
@@ -102,7 +102,7 @@ class CellDimensions {
 
     /// Sticky legend height. Also applied to sticky row height.
     required this.stickyLegendHeight,
-  })   : this.contentCellWidth = null,
+  })  : this.contentCellWidth = null,
         this.contentCellHeight = null;
 
   final double? contentCellWidth;

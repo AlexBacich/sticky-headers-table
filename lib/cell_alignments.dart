@@ -27,7 +27,7 @@ class CellAlignments {
 
     /// Alignment for the sticky legend cell.
     required this.stickyLegendAlignment,
-  })   : columnAlignments = null,
+  })  : columnAlignments = null,
         rowAlignments = null,
         contentCellAlignments = null,
         stickyColumnAlignments = null,
@@ -48,7 +48,7 @@ class CellAlignments {
 
     /// Alignment for the sticky legend cell.
     required this.stickyLegendAlignment,
-  })   : contentCellAlignment = null,
+  })  : contentCellAlignment = null,
         rowAlignments = null,
         contentCellAlignments = null,
         stickyColumnAlignments = null,
@@ -69,7 +69,7 @@ class CellAlignments {
 
     /// Alignment for the sticky legend cell.
     required this.stickyLegendAlignment,
-  })   : contentCellAlignment = null,
+  })  : contentCellAlignment = null,
         columnAlignments = null,
         contentCellAlignments = null,
         stickyRowAlignments = null,
@@ -91,7 +91,7 @@ class CellAlignments {
 
     /// Alignment for the sticky legend cell.
     required this.stickyLegendAlignment,
-  })   : contentCellAlignment = null,
+  })  : contentCellAlignment = null,
         columnAlignments = null,
         rowAlignments = null,
         stickyColumnAlignment = null,
