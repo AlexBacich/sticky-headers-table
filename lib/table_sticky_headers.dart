@@ -57,11 +57,13 @@ class StickyHeadersTable extends StatefulWidget {
 
     /// Scroll controllers for the table
     ScrollControllers? scrollControllers,
+    CustomScrollPhysics? scrollPhysics,
   })  : this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),
         this.onColumnTitlePressed = onColumnTitlePressed ?? ((_) {}),
         this.onRowTitlePressed = onRowTitlePressed ?? ((_) {}),
         this.onContentCellPressed = onContentCellPressed ?? ((_, __) {}),
+        this.scrollPhysics = scrollPhysics ?? CustomScrollPhysics(),
         super(key: key) {
     cellDimensions.runAssertions(rowsLength, columnsLength);
     cellAlignments.runAssertions(rowsLength, columnsLength);
@@ -83,6 +85,7 @@ class StickyHeadersTable extends StatefulWidget {
   final double initialScrollOffsetY;
   final Function(double x, double y)? onEndScrolling;
   final ScrollControllers scrollControllers;
+  final CustomScrollPhysics scrollPhysics;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
@@ -137,6 +140,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
+                  physics: widget.scrollPhysics._stickyRow,
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -181,6 +185,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               // STICKY COLUMN
               NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
+                  physics: widget.scrollPhysics._stickyColumn,
                   child: Column(
                     children: List.generate(
                       widget.rowsLength,
@@ -216,11 +221,13 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               Expanded(
                 child: NotificationListener<ScrollNotification>(
                   child: SingleChildScrollView(
+                    physics: widget.scrollPhysics._contentHorizontal,
                     scrollDirection: Axis.horizontal,
                     controller:
                         widget.scrollControllers._horizontalBodyController,
                     child: NotificationListener<ScrollNotification>(
                       child: SingleChildScrollView(
+                        physics: widget.scrollPhysics._contentVertical,
                         controller:
                             widget.scrollControllers._verticalBodyController,
                         child: Column(
@@ -351,4 +358,21 @@ class _SyncScrollController {
     }
     return false;
   }
+}
+
+class CustomScrollPhysics {
+  final ScrollPhysics? _stickyRow;
+  final ScrollPhysics? _stickyColumn;
+  final ScrollPhysics? _contentVertical;
+  final ScrollPhysics? _contentHorizontal;
+
+  CustomScrollPhysics({
+    ScrollPhysics? stickyRow,
+    ScrollPhysics? stickyColumn,
+    ScrollPhysics? contentVertical,
+    ScrollPhysics? contentHorizontal,
+  })  : this._stickyRow = stickyRow,
+        this._stickyColumn = stickyColumn,
+        this._contentVertical = contentVertical,
+        this._contentHorizontal = contentHorizontal;
 }
