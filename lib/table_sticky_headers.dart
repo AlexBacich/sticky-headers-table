@@ -112,7 +112,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
 
   @override
   Widget build(BuildContext context) {
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       widget.scrollControllers._horizontalTitleController
           .jumpTo(widget.initialScrollOffsetX);
       widget.scrollControllers._verticalTitleController
