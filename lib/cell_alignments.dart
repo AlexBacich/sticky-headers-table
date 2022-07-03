@@ -107,16 +107,20 @@ class CellAlignments {
   final List<Alignment>? stickyRowAlignments;
   final Alignment stickyLegendAlignment;
 
-  Alignment? contentAlignment(int i, int j) {
-    if (contentCellAlignment != null) {
-      return contentCellAlignment;
-    } else if (columnAlignments != null) {
-      return columnAlignments![j];
-    } else if (rowAlignments != null) {
-      return rowAlignments![i];
-    } else if (contentCellAlignments != null) {
-      return contentCellAlignments![i][j];
-    }
+  Alignment contentAlignment(int i, int j) {
+    final _contentCellAlignment = contentCellAlignment;
+    if (_contentCellAlignment != null) return _contentCellAlignment;
+
+    final _columnAlignments = columnAlignments;
+    if (_columnAlignments != null) return  _columnAlignments[j];
+
+    final _rowAlignments = rowAlignments;
+    if (_rowAlignments != null) return _rowAlignments[i];
+
+    final _contentCellAlignments = contentCellAlignments;
+    if (_contentCellAlignments != null) return _contentCellAlignments[i][j];
+
+    return Alignment.center;
   }
 
   Alignment? rowAlignment(int i) {
