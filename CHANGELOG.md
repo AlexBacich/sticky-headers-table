@@ -1,6 +1,9 @@
 ## Release Date
 * 05.11.2020
 
+## [2.0.1]
+* Updated to latest Flutter \ Android 
+
 ## [2.0.0] - 
 * Added Null-Safety
 * [BREAKING CHANGE] Removed FittedBox and BoxFit from cells. 
