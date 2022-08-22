@@ -58,6 +58,9 @@ class StickyHeadersTable extends StatefulWidget {
     /// Scroll controllers for the table
     ScrollControllers? scrollControllers,
     CustomScrollPhysics? scrollPhysics,
+
+    /// Table Direction to support RTL languages
+    this.tableDirection = TextDirection.ltr,
   })  : this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),
         this.onColumnTitlePressed = onColumnTitlePressed ?? ((_) {}),
@@ -86,6 +89,7 @@ class StickyHeadersTable extends StatefulWidget {
   final Function(double x, double y)? onEndScrolling;
   final ScrollControllers scrollControllers;
   final CustomScrollPhysics scrollPhysics;
+  final TextDirection tableDirection;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
@@ -103,6 +107,11 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
     super.initState();
     _scrollOffsetX = widget.initialScrollOffsetX;
     _scrollOffsetY = widget.initialScrollOffsetY;
+    // _verticalSyncController = _SyncScrollController([
+  }
+
+  @override
+  Widget build(BuildContext context) {
     _verticalSyncController = _SyncScrollController([
       widget.scrollControllers._verticalTitleController,
       widget.scrollControllers._verticalBodyController,
@@ -111,10 +120,6 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
       widget.scrollControllers._horizontalTitleController,
       widget.scrollControllers._horizontalBodyController,
     ]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       widget.scrollControllers._horizontalTitleController
           .jumpTo(widget.initialScrollOffsetX);
@@ -124,6 +129,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
     return Column(
       children: <Widget>[
         Row(
+          textDirection: widget.tableDirection,
           children: <Widget>[
             // STICKY LEGEND
             GestureDetector(
@@ -140,10 +146,12 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
+                  reverse: widget.tableDirection == TextDirection.rtl,
                   physics: widget.scrollPhysics._stickyRow,
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    textDirection: widget.tableDirection,
                     children: List.generate(
                       widget.columnsLength,
                       (i) => GestureDetector(
@@ -181,6 +189,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            textDirection: widget.tableDirection,
             children: <Widget>[
               // STICKY COLUMN
               NotificationListener<ScrollNotification>(
@@ -221,6 +230,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               Expanded(
                 child: NotificationListener<ScrollNotification>(
                   child: SingleChildScrollView(
+                    reverse: widget.tableDirection == TextDirection.rtl,
                     physics: widget.scrollPhysics._contentHorizontal,
                     scrollDirection: Axis.horizontal,
                     controller:
@@ -234,6 +244,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                           children: List.generate(
                             widget.rowsLength,
                             (int rowIdx) => Row(
+                              textDirection: widget.tableDirection,
                               children: List.generate(
                                 widget.columnsLength,
                                 (int columnIdx) => GestureDetector(
