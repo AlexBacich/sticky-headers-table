@@ -1,6 +1,10 @@
 ## Release Date
 * 05.11.2020
 
+## [2.0.2]
+* Added RTL support (thanks @Islam-alshiki)
+* Fixed resizing issue (thanks @pMertDogan)
+
 ## [2.0.1]
 * Updated to latest Flutter \ Android 
 

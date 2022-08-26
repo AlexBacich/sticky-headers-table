@@ -73,7 +73,6 @@ Widget usage example:
 // titleColumn - List<List<String>> (data)
 
 StickyHeadersTable(
-          tableDirection: TextDirection.ltr,
           columnsLength: titleColumn.length,
           rowsLength: titleRow.length,
           columnsTitleBuilder: (i) => Text(titleColumn[i]),
