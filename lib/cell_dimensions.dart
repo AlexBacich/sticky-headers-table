@@ -9,22 +9,6 @@ class CellDimensions {
     stickyLegendHeight: 50.0,
   );
 
-  @Deprecated('Use CellDimensions.fixed instead.')
-  const CellDimensions({
-    /// Content cell width. Also applied to sticky row width.
-    required this.contentCellWidth,
-
-    /// Content cell height. Also applied to sticky column height.
-    required this.contentCellHeight,
-
-    /// Sticky legend width. Also applied to sticky column width.
-    required this.stickyLegendWidth,
-
-    /// Sticky legend height. Also applied to sticky row height.
-    required this.stickyLegendHeight,
-  })  : this.columnWidths = null,
-        this.rowHeights = null;
-
   /// Same dimensions for each cell.
   const CellDimensions.uniform({
     required double width,

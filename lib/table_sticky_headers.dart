@@ -8,6 +8,8 @@ import 'package:flutter/scheduler.dart';
 
 import 'cell_alignments.dart';
 import 'cell_dimensions.dart';
+import 'custom_scroll_physics.dart';
+import 'scroll_controllers.dart';
 
 /// Table with sticky headers. Whenever you scroll content horizontally
 /// or vertically - top and left headers always stay.
@@ -51,21 +53,24 @@ class StickyHeadersTable extends StatefulWidget {
     /// Called when scrolling has ended, passing the current offset position
     this.onEndScrolling,
 
-    /// Scroll controllers for the table
+    /// Scroll controllers for the table. Make sure that you dispose ScrollControllers inside when you don't need table_sticky_headers anymore.
     ScrollControllers? scrollControllers,
+
+    /// Custom Scroll physics for table
     CustomScrollPhysics? scrollPhysics,
 
     /// Table Direction to support RTL languages
     this.tableDirection = TextDirection.ltr,
 
-    /// Initial scroll offsets in X and Y directions. Specified in points.
+    /// Initial scroll offsets in X and Y directions. Specified in points. Overrides scroll Offset in index if both are present.
     this.initialScrollOffsetX,
     this.initialScrollOffsetY,
 
-    /// Initial scroll offsets in X and Y directions. Specified in index. Overrides initial scroll Offset in points.
+    /// Initial scroll offsets in X and Y directions. Specified in index.
     this.scrollOffsetIndexX = 0,
     this.scrollOffsetIndexY = 0,
-  })  : this.scrollControllers = scrollControllers ?? ScrollControllers(),
+  })  : this.shouldDisposeScrollControllers = scrollControllers == null,
+        this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),
         this.onColumnTitlePressed = onColumnTitlePressed ?? ((_) {}),
         this.onRowTitlePressed = onRowTitlePressed ?? ((_) {}),
@@ -97,6 +102,8 @@ class StickyHeadersTable extends StatefulWidget {
   final double? initialScrollOffsetX;
   final double? initialScrollOffsetY;
 
+  final bool shouldDisposeScrollControllers;
+
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
 }
@@ -115,7 +122,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
     final scrollOffsetX = widget.initialScrollOffsetX;
     if (scrollOffsetX != null) {
       // Try to use natural offset first
-      widget.scrollControllers._horizontalTitleController.jumpTo(scrollOffsetX);
+      widget.scrollControllers.horizontalTitleController.jumpTo(scrollOffsetX);
     } else {
       // Try to use index offset second
       final scrollOffsetIndexX = widget.scrollOffsetIndexX;
@@ -128,7 +135,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
     final scrollOffsetY = widget.initialScrollOffsetY;
     if (scrollOffsetY != null) {
       // Try to use natural offset first
-      widget.scrollControllers._verticalTitleController.jumpTo(scrollOffsetY);
+      widget.scrollControllers.verticalTitleController.jumpTo(scrollOffsetY);
     } else {
       // Try to use index offset second
       final scrollOffsetIndexY = widget.scrollOffsetIndexY;
@@ -147,14 +154,22 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
   }
 
   @override
+  void dispose() {
+    if (widget.shouldDisposeScrollControllers) {
+      widget.scrollControllers.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _verticalSyncController = _SyncScrollController([
-      widget.scrollControllers._verticalTitleController,
-      widget.scrollControllers._verticalBodyController,
+      widget.scrollControllers.verticalTitleController,
+      widget.scrollControllers.verticalBodyController,
     ]);
     _horizontalSyncController = _SyncScrollController([
-      widget.scrollControllers._horizontalTitleController,
-      widget.scrollControllers._horizontalBodyController,
+      widget.scrollControllers.horizontalTitleController,
+      widget.scrollControllers.horizontalBodyController,
     ]);
     SchedulerBinding.instance.addPostFrameCallback((_) => _shiftUsingOffsets());
     return Column(
@@ -178,7 +193,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               child: NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
                   reverse: widget.tableDirection == TextDirection.rtl,
-                  physics: widget.scrollPhysics._stickyRow,
+                  physics: widget.scrollPhysics.stickyRow,
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -198,15 +213,15 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       ),
                     ),
                   ),
-                  controller: widget.scrollControllers._horizontalTitleController,
+                  controller: widget.scrollControllers.horizontalTitleController,
                 ),
                 onNotification: (ScrollNotification notification) {
                   final didEndScrolling = _horizontalSyncController.processNotification(
                     notification,
-                    widget.scrollControllers._horizontalTitleController,
+                    widget.scrollControllers.horizontalTitleController,
                   );
                   if (widget.onEndScrolling != null && didEndScrolling) {
-                    _scrollOffsetX = widget.scrollControllers._horizontalTitleController.offset;
+                    _scrollOffsetX = widget.scrollControllers.horizontalTitleController.offset;
                     widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
                   }
                   return true;
@@ -223,7 +238,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               /// STICKY COLUMN
               NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
-                  physics: widget.scrollPhysics._stickyColumn,
+                  physics: widget.scrollPhysics.stickyColumn,
                   child: Column(
                     children: List.generate(
                       widget.rowsLength,
@@ -240,15 +255,15 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       ),
                     ),
                   ),
-                  controller: widget.scrollControllers._verticalTitleController,
+                  controller: widget.scrollControllers.verticalTitleController,
                 ),
                 onNotification: (ScrollNotification notification) {
                   final didEndScrolling = _verticalSyncController.processNotification(
                     notification,
-                    widget.scrollControllers._verticalTitleController,
+                    widget.scrollControllers.verticalTitleController,
                   );
                   if (widget.onEndScrolling != null && didEndScrolling) {
-                    _scrollOffsetY = widget.scrollControllers._verticalTitleController.offset;
+                    _scrollOffsetY = widget.scrollControllers.verticalTitleController.offset;
                     widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
                   }
                   return true;
@@ -259,13 +274,13 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                 child: NotificationListener<ScrollNotification>(
                   child: SingleChildScrollView(
                     reverse: widget.tableDirection == TextDirection.rtl,
-                    physics: widget.scrollPhysics._contentHorizontal,
+                    physics: widget.scrollPhysics.contentHorizontal,
                     scrollDirection: Axis.horizontal,
-                    controller: widget.scrollControllers._horizontalBodyController,
+                    controller: widget.scrollControllers.horizontalBodyController,
                     child: NotificationListener<ScrollNotification>(
                       child: SingleChildScrollView(
-                        physics: widget.scrollPhysics._contentVertical,
-                        controller: widget.scrollControllers._verticalBodyController,
+                        physics: widget.scrollPhysics.contentVertical,
+                        controller: widget.scrollControllers.verticalBodyController,
                         child: Column(
                           children: List.generate(
                             widget.rowsLength,
@@ -291,10 +306,10 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       onNotification: (ScrollNotification notification) {
                         final didEndScrolling = _verticalSyncController.processNotification(
                           notification,
-                          widget.scrollControllers._verticalBodyController,
+                          widget.scrollControllers.verticalBodyController,
                         );
                         if (widget.onEndScrolling != null && didEndScrolling) {
-                          _scrollOffsetY = widget.scrollControllers._verticalBodyController.offset;
+                          _scrollOffsetY = widget.scrollControllers.verticalBodyController.offset;
                           widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
                         }
                         return true;
@@ -304,10 +319,10 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                   onNotification: (ScrollNotification notification) {
                     final didEndScrolling = _horizontalSyncController.processNotification(
                       notification,
-                      widget.scrollControllers._horizontalBodyController,
+                      widget.scrollControllers.horizontalBodyController,
                     );
                     if (widget.onEndScrolling != null && didEndScrolling) {
-                      _scrollOffsetX = widget.scrollControllers._horizontalBodyController.offset;
+                      _scrollOffsetX = widget.scrollControllers.horizontalBodyController.offset;
                       widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
                     }
                     return true;
@@ -322,23 +337,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
   }
 }
 
-class ScrollControllers {
-  final ScrollController _verticalTitleController;
-  final ScrollController _verticalBodyController;
 
-  final ScrollController _horizontalBodyController;
-  final ScrollController _horizontalTitleController;
-
-  ScrollControllers({
-    ScrollController? verticalTitleController,
-    ScrollController? verticalBodyController,
-    ScrollController? horizontalBodyController,
-    ScrollController? horizontalTitleController,
-  })  : this._verticalTitleController = verticalTitleController ?? ScrollController(),
-        this._verticalBodyController = verticalBodyController ?? ScrollController(),
-        this._horizontalBodyController = horizontalBodyController ?? ScrollController(),
-        this._horizontalTitleController = horizontalTitleController ?? ScrollController();
-}
 
 /// SyncScrollController keeps scroll controllers in sync.
 class _SyncScrollController {
@@ -370,7 +369,11 @@ class _SyncScrollController {
       if (notification is ScrollUpdateNotification) {
         for (ScrollController controller in _registeredScrollControllers) {
           if (identical(_scrollingController, controller)) continue;
-          controller.jumpTo(_scrollingController!.offset);
+          if (controller.positions.isEmpty) continue;
+          final offset = _scrollingController?.offset;
+          if (offset != null) {
+            controller.jumpTo(offset);
+          }
         }
       }
     }
@@ -383,21 +386,4 @@ class _SyncScrollController {
       Scrollable.ensureVisible(context);
     }
   }
-}
-
-class CustomScrollPhysics {
-  final ScrollPhysics? _stickyRow;
-  final ScrollPhysics? _stickyColumn;
-  final ScrollPhysics? _contentVertical;
-  final ScrollPhysics? _contentHorizontal;
-
-  CustomScrollPhysics({
-    ScrollPhysics? stickyRow,
-    ScrollPhysics? stickyColumn,
-    ScrollPhysics? contentVertical,
-    ScrollPhysics? contentHorizontal,
-  })  : this._stickyRow = stickyRow,
-        this._stickyColumn = stickyColumn,
-        this._contentVertical = contentVertical,
-        this._contentHorizontal = contentHorizontal;
 }
