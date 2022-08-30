@@ -1,5 +1,9 @@
 ## Release Date
-* 05.11.2020
+* 31.08.2022
+
+## [2.0.3]
+* Added ability to jump to index programmatically
+* Cleanup 
 
 ## [2.0.2]
 * Added RTL support (thanks @Islam-alshiki)
