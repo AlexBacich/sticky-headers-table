@@ -64,8 +64,8 @@ class StickyHeadersTable extends StatefulWidget {
     this.initialScrollOffsetY,
 
     /// Initial scroll offsets in X and Y directions. Specified in index.
-    this.scrollOffsetIndexX = 0,
-    this.scrollOffsetIndexY = 0,
+    this.scrollOffsetIndexX,
+    this.scrollOffsetIndexY,
   })  : this.shouldDisposeScrollControllers = scrollControllers == null,
         this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),

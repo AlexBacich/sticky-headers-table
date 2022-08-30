@@ -77,8 +77,6 @@ class _TapHandlerPageState extends State<TapHandlerPage> {
               child: Text('Sticky Legend'),
               onPressed: clearState,
             ),
-            scrollOffsetIndexX: selectedRow,
-            scrollOffsetIndexY: selectedColumn,
           ),
         ),
       );
