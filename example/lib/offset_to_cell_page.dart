@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class OffsetToCellPage extends StatefulWidget {
-  OffsetToCellPage(
-      {required this.data, required this.titleColumn, required this.titleRow});
+  OffsetToCellPage({
+    required this.data,
+    required this.titleColumn,
+    required this.titleRow,
+  });
 
   final List<List<String>> data;
   final List<String> titleColumn;
