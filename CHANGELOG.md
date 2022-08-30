@@ -3,7 +3,7 @@
 
 ## [2.0.3]
 * Added ability to jump to index programmatically
-* Cleanup 
+* Cleanup & code organization in SRC
 
 ## [2.0.2]
 * Added RTL support (thanks @Islam-alshiki)
