@@ -109,17 +109,6 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
     super.initState();
     _scrollOffsetX = widget.initialScrollOffsetX;
     _scrollOffsetY = widget.initialScrollOffsetY;
-
-    final widgetOffset = widget.offset;
-    if (widgetOffset != null) {
-      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-        Future.delayed(Duration(milliseconds: 300), () {
-          // TODO Replace duration
-          _horizontalSyncController.justJump(widgetOffset);
-          _verticalSyncController.justJump(widgetOffset);
-        });
-      });
-    }
   }
 
   @override
