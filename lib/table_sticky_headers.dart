@@ -48,10 +48,6 @@ class StickyHeadersTable extends StatefulWidget {
     Function(int rowIndex)? onRowTitlePressed,
     Function(int columnIndex, int rowIndex)? onContentCellPressed,
 
-    /// Initial scroll offsets in X and Y directions
-    this.initialScrollOffsetX = 0.0,
-    this.initialScrollOffsetY = 0.0,
-
     /// Called when scrolling has ended, passing the current offset position
     this.onEndScrolling,
 
@@ -62,9 +58,13 @@ class StickyHeadersTable extends StatefulWidget {
     /// Table Direction to support RTL languages
     this.tableDirection = TextDirection.ltr,
 
-    /// Initial Row and Column indexes which user sees when opens table. Used for programmatic navigation to other cells
-    this.initialVisibleColumnIndex = 5, // TODO
-    this.initialVisibleRowIndex = 5, // TODO
+    /// Initial scroll offsets in X and Y directions. Specified in points.
+    this.initialScrollOffsetX,
+    this.initialScrollOffsetY,
+
+    /// Initial scroll offsets in X and Y directions. Specified in index. Overrides initial scroll Offset in points.
+    this.scrollOffsetIndexX = 0,
+    this.scrollOffsetIndexY = 0,
   })  : this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),
         this.onColumnTitlePressed = onColumnTitlePressed ?? ((_) {}),
@@ -92,27 +92,58 @@ class StickyHeadersTable extends StatefulWidget {
   final ScrollControllers scrollControllers;
   final CustomScrollPhysics scrollPhysics;
   final TextDirection tableDirection;
-  final int initialVisibleRowIndex;
-  final int initialVisibleColumnIndex;
-  final double initialScrollOffsetX;
-  final double initialScrollOffsetY;
+  final int? scrollOffsetIndexY;
+  final int? scrollOffsetIndexX;
+  final double? initialScrollOffsetX;
+  final double? initialScrollOffsetY;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
 }
 
 class _StickyHeadersTableState extends State<StickyHeadersTable> {
+  final globalRowTitleKeys = <int, GlobalKey>{};
+  final globalColumnTitleKeys = <int, GlobalKey>{};
+
   late _SyncScrollController _horizontalSyncController;
   late _SyncScrollController _verticalSyncController;
 
   late double _scrollOffsetX;
   late double _scrollOffsetY;
 
+  void _shiftUsingOffsets() {
+    final scrollOffsetX = widget.initialScrollOffsetX;
+    if (scrollOffsetX != null) {
+      // Try to use natural offset first
+      widget.scrollControllers._horizontalTitleController.jumpTo(scrollOffsetX);
+    } else {
+      // Try to use index offset second
+      final scrollOffsetIndexX = widget.scrollOffsetIndexX;
+      final keyX = globalRowTitleKeys[scrollOffsetIndexX];
+      if (scrollOffsetIndexX != null && keyX != null) {
+        _verticalSyncController.jumpToIndex(keyX);
+      }
+    }
+
+    final scrollOffsetY = widget.initialScrollOffsetY;
+    if (scrollOffsetY != null) {
+      // Try to use natural offset first
+      widget.scrollControllers._verticalTitleController.jumpTo(scrollOffsetY);
+    } else {
+      // Try to use index offset second
+      final scrollOffsetIndexY = widget.scrollOffsetIndexY;
+      final keyY = globalColumnTitleKeys[scrollOffsetIndexY];
+      if (scrollOffsetIndexY != null && keyY != null) {
+        _horizontalSyncController.jumpToIndex(keyY);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _scrollOffsetX = widget.initialScrollOffsetX;
-    _scrollOffsetY = widget.initialScrollOffsetY;
+    _scrollOffsetX = widget.initialScrollOffsetX ?? 0;
+    _scrollOffsetY = widget.initialScrollOffsetY ?? 0;
   }
 
   @override
@@ -125,16 +156,13 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
       widget.scrollControllers._horizontalTitleController,
       widget.scrollControllers._horizontalBodyController,
     ]);
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      widget.scrollControllers._horizontalTitleController.jumpTo(widget.initialScrollOffsetX);
-      widget.scrollControllers._verticalTitleController.jumpTo(widget.initialScrollOffsetY);
-    });
+    SchedulerBinding.instance.addPostFrameCallback((_) => _shiftUsingOffsets());
     return Column(
       children: <Widget>[
         Row(
           textDirection: widget.tableDirection,
           children: <Widget>[
-            // STICKY LEGEND
+            /// STICKY LEGEND
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: widget.onStickyLegendPressed,
@@ -145,7 +173,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                 child: widget.legendCell,
               ),
             ),
-            // STICKY ROW
+            /// STICKY ROW
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
@@ -161,6 +189,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                         behavior: HitTestBehavior.opaque,
                         onTap: () => widget.onColumnTitlePressed(i),
                         child: Container(
+                          key: globalRowTitleKeys[i] ??= GlobalKey(),
                           width: widget.cellDimensions.stickyWidth(i),
                           height: widget.cellDimensions.stickyLegendHeight,
                           alignment: widget.cellAlignments.rowAlignment(i),
@@ -191,7 +220,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             crossAxisAlignment: CrossAxisAlignment.start,
             textDirection: widget.tableDirection,
             children: <Widget>[
-              // STICKY COLUMN
+              /// STICKY COLUMN
               NotificationListener<ScrollNotification>(
                 child: SingleChildScrollView(
                   physics: widget.scrollPhysics._stickyColumn,
@@ -202,6 +231,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                         behavior: HitTestBehavior.opaque,
                         onTap: () => widget.onRowTitlePressed(i),
                         child: Container(
+                          key: globalColumnTitleKeys[i] ??= GlobalKey(),
                           width: widget.cellDimensions.stickyLegendWidth,
                           height: widget.cellDimensions.stickyHeight(i),
                           alignment: widget.cellAlignments.columnAlignment(i),
@@ -347,10 +377,11 @@ class _SyncScrollController {
     return false;
   }
 
-  void justJump(double offset) {
-    _registeredScrollControllers.forEach((ScrollController scrollController) {
-      scrollController.jumpTo(offset);
-    });
+  void jumpToIndex(GlobalKey key) {
+    final context = key.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(context);
+    }
   }
 }
 

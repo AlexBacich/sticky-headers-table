@@ -14,13 +14,16 @@ class OffsetToCellPage extends StatefulWidget {
 }
 
 class _OffsetToCellPageState extends State<OffsetToCellPage> {
-  TextEditingController textXcontroller = TextEditingController(text: '0');
-  TextEditingController textYcontroller = TextEditingController(text: '0');
+  TextEditingController textXController = TextEditingController(text: '0');
+  TextEditingController textYController = TextEditingController(text: '0');
+
+  int indexX = 0;
+  int indexY = 0;
 
   @override
   void dispose() {
-    textXcontroller.dispose();
-    textYcontroller.dispose();
+    textXController.dispose();
+    textYController.dispose();
     super.dispose();
   }
 
@@ -28,7 +31,7 @@ class _OffsetToCellPageState extends State<OffsetToCellPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Move to cell'),
+        title: Text('Move to Cell Programmatically'),
         backgroundColor: Colors.amber,
       ),
       body: Column(
@@ -41,24 +44,48 @@ class _OffsetToCellPageState extends State<OffsetToCellPage> {
               rowsTitleBuilder: (i) => Text(widget.titleRow[i]),
               contentCellBuilder: (i, j) => Text(widget.data[i][j]),
               legendCell: Text('Sticky Legend'),
+              scrollOffsetIndexX: indexX,
+              scrollOffsetIndexY: indexY,
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32),
             child: Row(
               children: [
-                Text('X ='),
+                Text('X: '),
                 const SizedBox(width: 16),
-                Expanded(child: TextFormField(controller: textXcontroller)),
+                Expanded(child: TextFormField(controller: textXController)),
                 const SizedBox(width: 16),
-                Text('Y ='),
+                Text('Y: '),
                 const SizedBox(width: 16),
-                Expanded(child: TextFormField(controller: textYcontroller)),
+                Expanded(child: TextFormField(controller: textYController)),
                 const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: () {
-                    print(
-                        'Searching cell: X = ${textXcontroller.text}, Y = ${textYcontroller.text}');
+                    final newIndexX = int.tryParse(textXController.text);
+                    final newIndexY = int.tryParse(textYController.text);
+                    if (newIndexX == null || newIndexY == null) {
+                      final snackBar = SnackBar(content: Text('You should put number in input'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
+
+                    if (newIndexX >= widget.titleColumn.length) {
+                      final snackBar = SnackBar(content: Text('X is too big'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
+
+                    if (newIndexY >= widget.titleRow.length) {
+                      final snackBar = SnackBar(content: Text('Y is too big'));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      return;
+                    }
+
+                    setState(() {
+                      indexX = newIndexX;
+                      indexY = newIndexY;
+                    });
                   },
                   child: Text('Move'),
                 ),
