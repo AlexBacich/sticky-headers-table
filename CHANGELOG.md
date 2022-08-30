@@ -3,6 +3,7 @@
 
 ## [2.0.3]
 * Added ability to jump to index programmatically
+* Fixed problem with 'too sticky' headers where table gets jumping to 0,0 upon content update
 * Cleanup & code organization in SRC
 
 ## [2.0.2]
