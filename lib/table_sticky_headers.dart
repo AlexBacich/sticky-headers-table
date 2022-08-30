@@ -58,6 +58,7 @@ class StickyHeadersTable extends StatefulWidget {
     /// Scroll controllers for the table
     ScrollControllers? scrollControllers,
     CustomScrollPhysics? scrollPhysics,
+    this.offset,
 
     /// Table Direction to support RTL languages
     this.tableDirection = TextDirection.ltr,
@@ -90,6 +91,7 @@ class StickyHeadersTable extends StatefulWidget {
   final ScrollControllers scrollControllers;
   final CustomScrollPhysics scrollPhysics;
   final TextDirection tableDirection;
+  final double? offset;
 
   @override
   _StickyHeadersTableState createState() => _StickyHeadersTableState();
@@ -331,12 +333,9 @@ class ScrollControllers {
 
 /// SyncScrollController keeps scroll controllers in sync.
 class _SyncScrollController {
-  _SyncScrollController(List<ScrollController> controllers) {
-    controllers
-        .forEach((controller) => _registeredScrollControllers.add(controller));
-  }
+  _SyncScrollController(this._registeredScrollControllers);
 
-  final List<ScrollController> _registeredScrollControllers = [];
+  final List<ScrollController> _registeredScrollControllers;
 
   ScrollController? _scrollingController;
   bool _scrollingActive = false;
@@ -367,6 +366,12 @@ class _SyncScrollController {
       }
     }
     return false;
+  }
+
+  void justJump(double offset) {
+    _registeredScrollControllers.forEach((ScrollController scrollController) {
+      scrollController.jumpTo(offset);
+    });
   }
 }
 

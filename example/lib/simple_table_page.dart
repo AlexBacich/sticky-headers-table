@@ -23,6 +23,7 @@ class SimpleTablePage extends StatelessWidget {
         rowsTitleBuilder: (i) => Text(titleRow[i]),
         contentCellBuilder: (i, j) => Text(data[i][j]),
         legendCell: Text('Sticky Legend'),
+        // offset: 300,
       ),
     );
   }
