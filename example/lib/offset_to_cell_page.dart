@@ -34,7 +34,7 @@ class _OffsetToCellPageState extends State<OffsetToCellPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Move to Cell Programmatically'),
+        title: Text('Offset Programmatically (by points or index'),
         backgroundColor: Colors.amber,
       ),
       body: Column(

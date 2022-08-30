@@ -103,7 +103,7 @@ class _LandingPageState extends State<LandingPage> {
           ),
           BottomNavigationBarItem(
             icon: Container(),
-            label: 'To cell',
+            label: 'Offset',
           ),
         ],
         currentIndex: _selectedIndex,
