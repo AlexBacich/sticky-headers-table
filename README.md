@@ -37,9 +37,12 @@ You can provide functions that execute when tapping a cell by setting the proper
 - onRowTitlePressed: (j) => print('Row $j title pressed.'),
 - onContentCellPressed: (i, j) => print('Cell at column $i, row $j pressed.'),
 
-The initial scroll offset of the table in the x and y directions can be set by using the properties:
+You can provide offset to the table for X and Y, by using either double offset or cell index offset:
 - initialScrollOffsetX
 - initialScrollOffsetY
+or 
+- scrollOffsetIndexX
+- scrollOffsetIndexY
 
 You can also set a callback for when the scrolling ends by setting the onEndScrolling property.
 
@@ -60,7 +63,8 @@ StickyHeadersTable(
 )
 ```
 
-You can also define a custom set of scroll controllers for both title and body with the ```scrollControllers``` property
+You can also define a custom set of scroll controllers for both title and body with the ```scrollControllers``` property.
+IMPORTANT: don't forget to dispose your scroll controllers if you are using this field. Otherwise table will take care of disposal. 
   
 Feature requests and PRs are welcome.  
 

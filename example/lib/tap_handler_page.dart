@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class TapHandlerPage extends StatefulWidget {
-  TapHandlerPage(
-      {required this.data, required this.titleColumn, required this.titleRow});
+  TapHandlerPage({
+    required this.data,
+    required this.titleColumn,
+    required this.titleRow,
+  });
 
   final List<List<String>> data;
   final List<String> titleColumn;
@@ -59,10 +62,12 @@ class _TapHandlerPageState extends State<TapHandlerPage> {
                 style: TextStyle(color: Colors.black),
               ),
               style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(getContentColor(i, j)),
-                  elevation: MaterialStateProperty.all(0),
-                  padding: MaterialStateProperty.all(EdgeInsets.zero)),
+                backgroundColor: MaterialStateProperty.all(
+                  getContentColor(i, j),
+                ),
+                elevation: MaterialStateProperty.all(0),
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+              ),
               onPressed: () => setState(() {
                 selectedColumn = j;
                 selectedRow = i;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'offset_to_cell_page.dart';
 import 'simple_table_page.dart';
 import 'tap_handler_page.dart';
 import 'decorated_table_page.dart';
@@ -60,6 +61,12 @@ class _LandingPageState extends State<LandingPage> {
           titleRow: widget.makeTitleRow(),
           data: widget.makeData(),
         );
+      case 3:
+        return OffsetToCellPage(
+          titleColumn: widget.makeTitleColumn(),
+          titleRow: widget.makeTitleRow(),
+          data: widget.makeData(),
+        );
       default:
         print('$index not supported');
         return Container();
@@ -79,6 +86,8 @@ class _LandingPageState extends State<LandingPage> {
         child: _widgetOptions(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType
+            .fixed, // TODO Without it inactive elements disappear whet its are more then three
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Container(),
@@ -91,6 +100,10 @@ class _LandingPageState extends State<LandingPage> {
           BottomNavigationBarItem(
             icon: Container(),
             label: 'Decorated',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(),
+            label: 'Offset',
           ),
         ],
         currentIndex: _selectedIndex,
