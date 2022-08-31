@@ -115,7 +115,46 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
   late double _scrollOffsetX;
   late double _scrollOffsetY;
 
+  bool _onHorizontalScrollingNotification({
+    required ScrollNotification notification,
+    required ScrollController controller,
+  }) {
+    final didEndScrolling = _horizontalSyncController.processNotification(
+      notification,
+      controller,
+    );
+    final onEndScrolling = widget.onEndScrolling;
+    if (didEndScrolling && onEndScrolling != null) {
+      _scrollOffsetX = controller.offset;
+      onEndScrolling(_scrollOffsetX, _scrollOffsetY);
+    }
+    return true;
+  }
+
+  bool _onVerticalScrollingNotification({
+    required ScrollNotification notification,
+    required ScrollController controller,
+  }) {
+    final didEndScrolling = _verticalSyncController.processNotification(
+      notification,
+      controller,
+    );
+    final onEndScrolling = widget.onEndScrolling;
+    if (didEndScrolling && onEndScrolling != null) {
+      _scrollOffsetY = controller.offset;
+      onEndScrolling(_scrollOffsetX, _scrollOffsetY);
+    }
+    return true;
+  }
+
   void _shiftUsingOffsets() {
+    void jumpToIndex(GlobalKey key) {
+      final context = key.currentContext;
+      if (context != null) {
+        Scrollable.ensureVisible(context);
+      }
+    }
+
     final scrollOffsetX = widget.initialScrollOffsetX;
     if (scrollOffsetX != null) {
       // Try to use natural offset first
@@ -124,9 +163,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
       // Try to use index offset second
       final scrollOffsetIndexX = widget.scrollOffsetIndexX;
       final keyX = globalRowTitleKeys[scrollOffsetIndexX];
-      if (scrollOffsetIndexX != null && keyX != null) {
-        _verticalSyncController.jumpToIndex(keyX);
-      }
+      if (scrollOffsetIndexX != null && keyX != null) jumpToIndex(keyX);
     }
 
     final scrollOffsetY = widget.initialScrollOffsetY;
@@ -137,9 +174,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
       // Try to use index offset second
       final scrollOffsetIndexY = widget.scrollOffsetIndexY;
       final keyY = globalColumnTitleKeys[scrollOffsetIndexY];
-      if (scrollOffsetIndexY != null && keyY != null) {
-        _horizontalSyncController.jumpToIndex(keyY);
-      }
+      if (scrollOffsetIndexY != null && keyY != null) jumpToIndex(keyY);
     }
   }
 
@@ -160,14 +195,14 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
 
   @override
   Widget build(BuildContext context) {
-    _verticalSyncController = _SyncScrollController([
+    _verticalSyncController = _SyncScrollController(
       widget.scrollControllers.verticalTitleController,
       widget.scrollControllers.verticalBodyController,
-    ]);
-    _horizontalSyncController = _SyncScrollController([
+    );
+    _horizontalSyncController = _SyncScrollController(
       widget.scrollControllers.horizontalTitleController,
       widget.scrollControllers.horizontalBodyController,
-    ]);
+    );
     SchedulerBinding.instance.addPostFrameCallback((_) => _shiftUsingOffsets());
     return Column(
       children: <Widget>[
@@ -185,6 +220,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                 child: widget.legendCell,
               ),
             ),
+
             /// STICKY ROW
             Expanded(
               child: NotificationListener<ScrollNotification>(
@@ -210,19 +246,15 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                       ),
                     ),
                   ),
-                  controller: widget.scrollControllers.horizontalTitleController,
+                  controller:
+                      widget.scrollControllers.horizontalTitleController,
                 ),
-                onNotification: (ScrollNotification notification) {
-                  final didEndScrolling = _horizontalSyncController.processNotification(
-                    notification,
-                    widget.scrollControllers.horizontalTitleController,
-                  );
-                  if (widget.onEndScrolling != null && didEndScrolling) {
-                    _scrollOffsetX = widget.scrollControllers.horizontalTitleController.offset;
-                    widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
-                  }
-                  return true;
-                },
+                onNotification: (notification) =>
+                    _onHorizontalScrollingNotification(
+                  notification: notification,
+                  controller:
+                      widget.scrollControllers.horizontalTitleController,
+                ),
               ),
             )
           ],
@@ -254,17 +286,11 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                   ),
                   controller: widget.scrollControllers.verticalTitleController,
                 ),
-                onNotification: (ScrollNotification notification) {
-                  final didEndScrolling = _verticalSyncController.processNotification(
-                    notification,
-                    widget.scrollControllers.verticalTitleController,
-                  );
-                  if (widget.onEndScrolling != null && didEndScrolling) {
-                    _scrollOffsetY = widget.scrollControllers.verticalTitleController.offset;
-                    widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
-                  }
-                  return true;
-                },
+                onNotification: (notification) =>
+                    _onVerticalScrollingNotification(
+                  notification: notification,
+                  controller: widget.scrollControllers.verticalTitleController,
+                ),
               ),
               // CONTENT
               Expanded(
@@ -273,11 +299,13 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                     reverse: widget.tableDirection == TextDirection.rtl,
                     physics: widget.scrollPhysics.contentHorizontal,
                     scrollDirection: Axis.horizontal,
-                    controller: widget.scrollControllers.horizontalBodyController,
+                    controller:
+                        widget.scrollControllers.horizontalBodyController,
                     child: NotificationListener<ScrollNotification>(
                       child: SingleChildScrollView(
                         physics: widget.scrollPhysics.contentVertical,
-                        controller: widget.scrollControllers.verticalBodyController,
+                        controller:
+                            widget.scrollControllers.verticalBodyController,
                         child: Column(
                           children: List.generate(
                             widget.rowsLength,
@@ -287,12 +315,19 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                                 widget.columnsLength,
                                 (int columnIdx) => GestureDetector(
                                   behavior: HitTestBehavior.opaque,
-                                  onTap: () => widget.onContentCellPressed(columnIdx, rowIdx),
+                                  onTap: () => widget.onContentCellPressed(
+                                      columnIdx, rowIdx),
                                   child: Container(
-                                    width: widget.cellDimensions.contentSize(rowIdx, columnIdx).width,
-                                    height: widget.cellDimensions.contentSize(rowIdx, columnIdx).height,
-                                    alignment: widget.cellAlignments.contentAlignment(rowIdx, columnIdx),
-                                    child: widget.contentCellBuilder(columnIdx, rowIdx),
+                                    width: widget.cellDimensions
+                                        .contentSize(rowIdx, columnIdx)
+                                        .width,
+                                    height: widget.cellDimensions
+                                        .contentSize(rowIdx, columnIdx)
+                                        .height,
+                                    alignment: widget.cellAlignments
+                                        .contentAlignment(rowIdx, columnIdx),
+                                    child: widget.contentCellBuilder(
+                                        columnIdx, rowIdx),
                                   ),
                                 ),
                               ),
@@ -300,30 +335,20 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
                           ),
                         ),
                       ),
-                      onNotification: (ScrollNotification notification) {
-                        final didEndScrolling = _verticalSyncController.processNotification(
-                          notification,
-                          widget.scrollControllers.verticalBodyController,
-                        );
-                        if (widget.onEndScrolling != null && didEndScrolling) {
-                          _scrollOffsetY = widget.scrollControllers.verticalBodyController.offset;
-                          widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
-                        }
-                        return true;
-                      },
+                      onNotification: (notification) =>
+                          _onVerticalScrollingNotification(
+                        notification: notification,
+                        controller:
+                            widget.scrollControllers.verticalBodyController,
+                      ),
                     ),
                   ),
-                  onNotification: (ScrollNotification notification) {
-                    final didEndScrolling = _horizontalSyncController.processNotification(
-                      notification,
-                      widget.scrollControllers.horizontalBodyController,
-                    );
-                    if (widget.onEndScrolling != null && didEndScrolling) {
-                      _scrollOffsetX = widget.scrollControllers.horizontalBodyController.offset;
-                      widget.onEndScrolling!(_scrollOffsetX, _scrollOffsetY);
-                    }
-                    return true;
-                  },
+                  onNotification: (notification) =>
+                      _onHorizontalScrollingNotification(
+                    notification: notification,
+                    controller:
+                        widget.scrollControllers.horizontalBodyController,
+                  ),
                 ),
               ),
             ],
@@ -334,13 +359,15 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
   }
 }
 
-
-
 /// SyncScrollController keeps scroll controllers in sync.
 class _SyncScrollController {
-  _SyncScrollController(this._registeredScrollControllers);
+  _SyncScrollController(
+    this._titleController,
+    this._bodyController,
+  );
 
-  final List<ScrollController> _registeredScrollControllers;
+  final ScrollController _titleController;
+  final ScrollController _bodyController;
 
   ScrollController? _scrollingController;
   bool _scrollingActive = false;
@@ -348,8 +375,9 @@ class _SyncScrollController {
   /// Returns true if reached scroll end
   bool processNotification(
     ScrollNotification notification,
-    ScrollController controller,
-  ) {
+    ScrollController controller, {
+    Function(double x, double y)? onEndScrolling,
+  }) {
     if (notification is ScrollStartNotification && !_scrollingActive) {
       _scrollingController = controller;
       _scrollingActive = true;
@@ -364,7 +392,7 @@ class _SyncScrollController {
       }
 
       if (notification is ScrollUpdateNotification) {
-        for (ScrollController controller in _registeredScrollControllers) {
+        for (final controller in [_titleController, _bodyController]) {
           if (identical(_scrollingController, controller)) continue;
           if (controller.positions.isEmpty) continue;
           final offset = _scrollingController?.offset;
@@ -375,12 +403,5 @@ class _SyncScrollController {
       }
     }
     return false;
-  }
-
-  void jumpToIndex(GlobalKey key) {
-    final context = key.currentContext;
-    if (context != null) {
-      Scrollable.ensureVisible(context);
-    }
   }
 }

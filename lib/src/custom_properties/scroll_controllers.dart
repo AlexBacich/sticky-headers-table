@@ -6,10 +6,14 @@ class ScrollControllers {
     ScrollController? verticalBodyController,
     ScrollController? horizontalBodyController,
     ScrollController? horizontalTitleController,
-  })  : this.verticalTitleController = verticalTitleController ?? ScrollController(),
-        this.verticalBodyController = verticalBodyController ?? ScrollController(),
-        this.horizontalBodyController = horizontalBodyController ?? ScrollController(),
-        this.horizontalTitleController = horizontalTitleController ?? ScrollController();
+  })  : this.verticalTitleController =
+            verticalTitleController ?? ScrollController(),
+        this.verticalBodyController =
+            verticalBodyController ?? ScrollController(),
+        this.horizontalBodyController =
+            horizontalBodyController ?? ScrollController(),
+        this.horizontalTitleController =
+            horizontalTitleController ?? ScrollController();
 
   final ScrollController verticalTitleController;
   final ScrollController verticalBodyController;

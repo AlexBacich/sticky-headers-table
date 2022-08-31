@@ -17,10 +17,12 @@ class OffsetToCellPage extends StatefulWidget {
 }
 
 class _OffsetToCellPageState extends State<OffsetToCellPage> {
-  TextEditingController textControllerLeft = TextEditingController();
-  TextEditingController textControllerTop = TextEditingController();
-  TextEditingController textControllerOffsetX = TextEditingController();
-  TextEditingController textControllerOffsetY = TextEditingController();
+  TextEditingController textControllerLeft = TextEditingController(text: '0');
+  TextEditingController textControllerTop = TextEditingController(text: '0');
+  TextEditingController textControllerOffsetX =
+      TextEditingController(text: '0');
+  TextEditingController textControllerOffsetY =
+      TextEditingController(text: '0');
 
   int? indexX;
   int? indexY;
@@ -66,12 +68,14 @@ class _OffsetToCellPageState extends State<OffsetToCellPage> {
                 Text('Offset X: '),
                 const SizedBox(width: 8),
                 Expanded(
-                    child: TextFormField(controller: textControllerOffsetX)),
+                  child: TextFormField(controller: textControllerOffsetX),
+                ),
                 const SizedBox(width: 16),
                 Text('Offset Y: '),
                 const SizedBox(width: 8),
                 Expanded(
-                    child: TextFormField(controller: textControllerOffsetY)),
+                  child: TextFormField(controller: textControllerOffsetY),
+                ),
                 const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: onOffset,
