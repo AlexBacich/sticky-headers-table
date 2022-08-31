@@ -43,6 +43,8 @@ class DecoratedTablePage extends StatelessWidget {
           'Sticky Legend',
           textStyle: textTheme.button!.copyWith(fontSize: 16.5),
         ),
+        showVerticalScrollbar: true,
+        showHorizontalScrollbar: true,
       ),
     );
   }

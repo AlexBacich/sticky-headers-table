@@ -66,6 +66,11 @@ class StickyHeadersTable extends StatefulWidget {
     /// Initial scroll offsets in X and Y directions. Specified in index.
     this.scrollOffsetIndexX,
     this.scrollOffsetIndexY,
+
+    /// Turn scrollbars
+    this.showVerticalScrollbar,
+    this.showHorizontalScrollbar,
+
   })  : this.shouldDisposeScrollControllers = scrollControllers == null,
         this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),
@@ -98,6 +103,8 @@ class StickyHeadersTable extends StatefulWidget {
   final int? scrollOffsetIndexX;
   final double? initialScrollOffsetX;
   final double? initialScrollOffsetY;
+  final bool? showVerticalScrollbar;
+  final bool? showHorizontalScrollbar;
 
   final bool shouldDisposeScrollControllers;
 
@@ -224,30 +231,35 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             /// STICKY ROW
             Expanded(
               child: NotificationListener<ScrollNotification>(
-                child: SingleChildScrollView(
-                  reverse: widget.tableDirection == TextDirection.rtl,
-                  physics: widget.scrollPhysics.stickyRow,
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    textDirection: widget.tableDirection,
-                    children: List.generate(
-                      widget.columnsLength,
-                      (i) => GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => widget.onColumnTitlePressed(i),
-                        child: Container(
-                          key: globalRowTitleKeys[i] ??= GlobalKey(),
-                          width: widget.cellDimensions.stickyWidth(i),
-                          height: widget.cellDimensions.stickyLegendHeight,
-                          alignment: widget.cellAlignments.rowAlignment(i),
-                          child: widget.columnsTitleBuilder(i),
+                child: Scrollbar(
+                  thumbVisibility: widget.showVerticalScrollbar ?? false,
+                  controller:
+                      widget.scrollControllers.horizontalTitleController,
+                  child: SingleChildScrollView(
+                    reverse: widget.tableDirection == TextDirection.rtl,
+                    physics: widget.scrollPhysics.stickyRow,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      textDirection: widget.tableDirection,
+                      children: List.generate(
+                        widget.columnsLength,
+                        (i) => GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => widget.onColumnTitlePressed(i),
+                          child: Container(
+                            key: globalRowTitleKeys[i] ??= GlobalKey(),
+                            width: widget.cellDimensions.stickyWidth(i),
+                            height: widget.cellDimensions.stickyLegendHeight,
+                            alignment: widget.cellAlignments.rowAlignment(i),
+                            child: widget.columnsTitleBuilder(i),
+                          ),
                         ),
                       ),
                     ),
+                    controller:
+                        widget.scrollControllers.horizontalTitleController,
                   ),
-                  controller:
-                      widget.scrollControllers.horizontalTitleController,
                 ),
                 onNotification: (notification) =>
                     _onHorizontalScrollingNotification(
@@ -267,7 +279,7 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               /// STICKY COLUMN
               NotificationListener<ScrollNotification>(
                 child: Scrollbar(
-                  thumbVisibility: true,
+                  thumbVisibility: widget.showHorizontalScrollbar ?? false,
                   controller: widget.scrollControllers.verticalBodyController,
                   child: SingleChildScrollView(
                     physics: widget.scrollPhysics.stickyColumn,
