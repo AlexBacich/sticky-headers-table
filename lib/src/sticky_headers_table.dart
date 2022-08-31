@@ -266,25 +266,30 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             children: <Widget>[
               /// STICKY COLUMN
               NotificationListener<ScrollNotification>(
-                child: SingleChildScrollView(
-                  physics: widget.scrollPhysics.stickyColumn,
-                  child: Column(
-                    children: List.generate(
-                      widget.rowsLength,
-                      (i) => GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => widget.onRowTitlePressed(i),
-                        child: Container(
-                          key: globalColumnTitleKeys[i] ??= GlobalKey(),
-                          width: widget.cellDimensions.stickyLegendWidth,
-                          height: widget.cellDimensions.stickyHeight(i),
-                          alignment: widget.cellAlignments.columnAlignment(i),
-                          child: widget.rowsTitleBuilder(i),
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  controller: widget.scrollControllers.verticalBodyController,
+                  child: SingleChildScrollView(
+                    physics: widget.scrollPhysics.stickyColumn,
+                    child: Column(
+                      children: List.generate(
+                        widget.rowsLength,
+                        (i) => GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => widget.onRowTitlePressed(i),
+                          child: Container(
+                            key: globalColumnTitleKeys[i] ??= GlobalKey(),
+                            width: widget.cellDimensions.stickyLegendWidth,
+                            height: widget.cellDimensions.stickyHeight(i),
+                            alignment: widget.cellAlignments.columnAlignment(i),
+                            child: widget.rowsTitleBuilder(i),
+                          ),
                         ),
                       ),
                     ),
+                    controller:
+                        widget.scrollControllers.verticalTitleController,
                   ),
-                  controller: widget.scrollControllers.verticalTitleController,
                 ),
                 onNotification: (notification) =>
                     _onVerticalScrollingNotification(
