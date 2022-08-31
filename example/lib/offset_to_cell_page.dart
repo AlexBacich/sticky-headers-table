@@ -17,16 +17,22 @@ class OffsetToCellPage extends StatefulWidget {
 }
 
 class _OffsetToCellPageState extends State<OffsetToCellPage> {
-  TextEditingController textXController = TextEditingController(text: '0');
-  TextEditingController textYController = TextEditingController(text: '0');
+  TextEditingController textControllerLeft = TextEditingController();
+  TextEditingController textControllerTop = TextEditingController();
+  TextEditingController textControllerOffsetX = TextEditingController();
+  TextEditingController textControllerOffsetY = TextEditingController();
 
-  int indexX = 0;
-  int indexY = 0;
+  int? indexX;
+  int? indexY;
+  double? offsetX;
+  double? offsetY;
 
   @override
   void dispose() {
-    textXController.dispose();
-    textYController.dispose();
+    textControllerLeft.dispose();
+    textControllerTop.dispose();
+    textControllerOffsetX.dispose();
+    textControllerOffsetY.dispose();
     super.dispose();
   }
 
@@ -34,7 +40,7 @@ class _OffsetToCellPageState extends State<OffsetToCellPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Offset Programmatically (by points or index'),
+        title: Text('Offset Programmatically (by points or index)'),
         backgroundColor: Colors.amber,
       ),
       body: Column(
@@ -49,48 +55,46 @@ class _OffsetToCellPageState extends State<OffsetToCellPage> {
               legendCell: Text('Sticky Legend'),
               scrollOffsetIndexX: indexX,
               scrollOffsetIndexY: indexY,
+              initialScrollOffsetX: offsetX,
+              initialScrollOffsetY: offsetY,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
             child: Row(
               children: [
-                Text('X: '),
+                Text('Offset X: '),
+                const SizedBox(width: 8),
+                Expanded(
+                    child: TextFormField(controller: textControllerOffsetX)),
                 const SizedBox(width: 16),
-                Expanded(child: TextFormField(controller: textXController)),
-                const SizedBox(width: 16),
-                Text('Y: '),
-                const SizedBox(width: 16),
-                Expanded(child: TextFormField(controller: textYController)),
+                Text('Offset Y: '),
+                const SizedBox(width: 8),
+                Expanded(
+                    child: TextFormField(controller: textControllerOffsetY)),
                 const SizedBox(width: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    final newIndexX = int.tryParse(textXController.text);
-                    final newIndexY = int.tryParse(textYController.text);
-                    if (newIndexX == null || newIndexY == null) {
-                      final snackBar = SnackBar(content: Text('You should put number in input'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
-
-                    if (newIndexX >= widget.titleColumn.length) {
-                      final snackBar = SnackBar(content: Text('X is too big'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
-
-                    if (newIndexY >= widget.titleRow.length) {
-                      final snackBar = SnackBar(content: Text('Y is too big'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      return;
-                    }
-
-                    setState(() {
-                      indexX = newIndexX;
-                      indexY = newIndexY;
-                    });
-                  },
-                  child: Text('Move'),
+                  onPressed: onOffset,
+                  child: Text('To Pixel'),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+            child: Row(
+              children: [
+                Text('Column: '),
+                const SizedBox(width: 8),
+                Expanded(child: TextFormField(controller: textControllerLeft)),
+                const SizedBox(width: 16),
+                Text('Row: '),
+                const SizedBox(width: 8),
+                Expanded(child: TextFormField(controller: textControllerTop)),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: onCell,
+                  child: Text('To Cell'),
                 ),
               ],
             ),
@@ -98,5 +102,51 @@ class _OffsetToCellPageState extends State<OffsetToCellPage> {
         ],
       ),
     );
+  }
+
+  void onOffset() {
+    final newOffsetX = double.tryParse(textControllerOffsetX.text);
+    final newOffsetY = double.tryParse(textControllerOffsetY.text);
+    if (newOffsetX == null || newOffsetY == null) {
+      final snackBar =
+          SnackBar(content: Text('You should put number in input'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    setState(() {
+      offsetX = newOffsetX;
+      offsetY = newOffsetY;
+    });
+  }
+
+  void onCell() {
+    final newIndexX = int.tryParse(textControllerLeft.text);
+    final newIndexY = int.tryParse(textControllerTop.text);
+    if (newIndexX == null || newIndexY == null) {
+      final snackBar =
+          SnackBar(content: Text('You should put number in input'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    if (newIndexX >= widget.titleColumn.length) {
+      final snackBar = SnackBar(content: Text('X is too big'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    if (newIndexY >= widget.titleRow.length) {
+      final snackBar = SnackBar(content: Text('Y is too big'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    setState(() {
+      offsetX = null;
+      offsetY = null;
+      indexX = newIndexX;
+      indexY = newIndexY;
+    });
   }
 }
