@@ -56,7 +56,9 @@ class _ColumnWidthInPercentPageState extends State<ColumnWidthInPercentPage> {
         contentCellBuilder: (i, j) => Text(data[i][j]),
         legendCell: Text('Sticky Legend'),
         cellDimensions: CellDimensions.uniform(
-            width: (screenWidth / (titleColumn.length + 1)), height: 50),
+          width: (screenWidth / (titleColumn.length + 1)),
+          height: 50,
+        ),
       ),
     );
   }

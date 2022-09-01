@@ -70,7 +70,6 @@ class StickyHeadersTable extends StatefulWidget {
     /// Turn scrollbars
     this.showVerticalScrollbar,
     this.showHorizontalScrollbar,
-
   })  : this.shouldDisposeScrollControllers = scrollControllers == null,
         this.scrollControllers = scrollControllers ?? ScrollControllers(),
         this.onStickyLegendPressed = onStickyLegendPressed ?? (() {}),
@@ -232,6 +231,8 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 child: Scrollbar(
+                  // Key is required to avoid 'The Scrollbar's ScrollController has no ScrollPosition attached.
+                  key: Key('Row ${widget.showVerticalScrollbar}'),
                   thumbVisibility: widget.showVerticalScrollbar ?? false,
                   controller:
                       widget.scrollControllers.horizontalTitleController,
@@ -279,6 +280,8 @@ class _StickyHeadersTableState extends State<StickyHeadersTable> {
               /// STICKY COLUMN
               NotificationListener<ScrollNotification>(
                 child: Scrollbar(
+                  // Key is required to avoid 'The Scrollbar's ScrollController has no ScrollPosition attached.
+                  key: Key('Column ${widget.showHorizontalScrollbar}'),
                   thumbVisibility: widget.showHorizontalScrollbar ?? false,
                   controller: widget.scrollControllers.verticalBodyController,
                   child: SingleChildScrollView(
