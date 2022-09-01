@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'column_in_percent_page.dart';
 import 'offset_to_cell_page.dart';
 import 'simple_table_page.dart';
 import 'tap_handler_page.dart';
@@ -67,6 +68,8 @@ class _LandingPageState extends State<LandingPage> {
           titleRow: widget.makeTitleRow(),
           data: widget.makeData(),
         );
+      case 4:
+        return ColumnWidthInPercentPage();
       default:
         print('$index not supported');
         return Container();
@@ -104,6 +107,10 @@ class _LandingPageState extends State<LandingPage> {
           BottomNavigationBarItem(
             icon: Container(),
             label: 'Offset',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(),
+            label: 'Column in %',
           ),
         ],
         currentIndex: _selectedIndex,

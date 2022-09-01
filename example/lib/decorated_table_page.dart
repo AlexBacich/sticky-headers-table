@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
-class DecoratedTablePage extends StatelessWidget {
+class DecoratedTablePage extends StatefulWidget {
   DecoratedTablePage({
     required this.data,
     required this.titleColumn,
@@ -11,6 +11,14 @@ class DecoratedTablePage extends StatelessWidget {
   final List<List<String>> data;
   final List<String> titleColumn;
   final List<String> titleRow;
+
+  @override
+  State<DecoratedTablePage> createState() => _DecoratedTablePageState();
+}
+
+class _DecoratedTablePageState extends State<DecoratedTablePage> {
+  var isHorizontalScrollbar = false;
+  var isVerticalScrollbar = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,25 +32,59 @@ class DecoratedTablePage extends StatelessWidget {
         ),
         backgroundColor: Colors.amber,
       ),
-      body: StickyHeadersTable(
-        columnsLength: titleColumn.length,
-        rowsLength: titleRow.length,
-        columnsTitleBuilder: (i) => TableCell.stickyRow(
-          titleColumn[i],
-          textStyle: textTheme.button!.copyWith(fontSize: 15.0),
-        ),
-        rowsTitleBuilder: (i) => TableCell.stickyColumn(
-          titleRow[i],
-          textStyle: textTheme.button!.copyWith(fontSize: 15.0),
-        ),
-        contentCellBuilder: (i, j) => TableCell.content(
-          data[i][j],
-          textStyle: textTheme.bodyText2!.copyWith(fontSize: 12.0),
-        ),
-        legendCell: TableCell.legend(
-          'Sticky Legend',
-          textStyle: textTheme.button!.copyWith(fontSize: 16.5),
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StickyHeadersTable(
+              columnsLength: widget.titleColumn.length,
+              rowsLength: widget.titleRow.length,
+              columnsTitleBuilder: (i) => TableCell.stickyRow(
+                widget.titleColumn[i],
+                textStyle: textTheme.button!.copyWith(fontSize: 15.0),
+              ),
+              rowsTitleBuilder: (i) => TableCell.stickyColumn(
+                widget.titleRow[i],
+                textStyle: textTheme.button!.copyWith(fontSize: 15.0),
+              ),
+              contentCellBuilder: (i, j) => TableCell.content(
+                widget.data[i][j],
+                textStyle: textTheme.bodyText2!.copyWith(fontSize: 12.0),
+              ),
+              legendCell: TableCell.legend(
+                'Sticky Legend',
+                textStyle: textTheme.button!.copyWith(fontSize: 16.5),
+              ),
+              showVerticalScrollbar: isVerticalScrollbar,
+              showHorizontalScrollbar: isHorizontalScrollbar,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                Checkbox(
+                  value: isHorizontalScrollbar,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isHorizontalScrollbar = !isHorizontalScrollbar;
+                    });
+                  },
+                ),
+                Text('Horizontal scrollbar'),
+                const SizedBox(width: 16),
+                Checkbox(
+                  value: isVerticalScrollbar,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isVerticalScrollbar = !isVerticalScrollbar;
+                    });
+                  },
+                ),
+                Text('Vertical scrollbar'),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

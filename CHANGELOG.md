@@ -1,5 +1,9 @@
 ## Release Date
-* 31.08.2022
+* 1.09.2022
+
+## [2.0.4]
+* Added ability to make scrollbars always visible
+* Added example with column width based on screen % 
 
 ## [2.0.3]
 * Added ability to jump to index programmatically
