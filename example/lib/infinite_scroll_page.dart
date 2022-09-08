@@ -30,6 +30,11 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
       if (scrollController.offset >=
           scrollController.position.maxScrollExtent) {
         fetchData();
+
+        if (hasMore == false) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No more data to load')));
+        }
       }
     });
   }
@@ -92,7 +97,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
               ),
             ),
           ),
-          // hasMore
           isLoading
               // TODO Not working after the first load
               ? Center(child: const CircularProgressIndicator())
@@ -105,7 +109,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   Future<void> fetchData() async {
     if (isLoading) return;
     if (dataUrl.isEmpty) return;
-    isLoading = true;
+    setState(() {
+      isLoading = true;
+    });
 
     try {
       final response = await Dio().get(
@@ -130,9 +136,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
         if (newBreedsData.currentPage == newBreedsData.lastPage) {
           hasMore = false;
-          // TODO Appears when loading the last portion, but not exactly at the end
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('No more data to load')));
         }
 
         // listBreeds.addAll(newListBreeds);
@@ -143,15 +146,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           content: Text('Occur data loading error. Please try latter')));
       print('Loading error: $e');
     }
-
-    print(legendCell);
-    print(titleColumn);
-    print(titleRow);
-    print(matrixBreeds);
-    print(matrixBreeds.isNotEmpty
-        ? matrixBreeds[matrixBreeds.length - 1]
-        : 'matrixBreeds is blank');
-    print(matrixBreeds.length);
   }
 
   Future<void> refreshData() async {
