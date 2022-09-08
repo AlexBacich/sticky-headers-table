@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'column_in_percent_page.dart';
+import 'infinite_scroll_page.dart';
 import 'offset_to_cell_page.dart';
 import 'simple_table_page.dart';
 import 'tap_handler_page.dart';
@@ -70,6 +71,8 @@ class _LandingPageState extends State<LandingPage> {
         );
       case 4:
         return ColumnWidthInPercentPage();
+      case 5:
+        return InfiniteScrollPage();
       default:
         print('$index not supported');
         return Container();
@@ -90,15 +93,15 @@ class _LandingPageState extends State<LandingPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType
-            .fixed, // TODO Without it inactive elements disappear whet its are more then three
+            .fixed,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Container(),
-            label: 'Simple',
+            label: 'Base',
           ),
           BottomNavigationBarItem(
             icon: Container(),
-            label: 'Tap Handler',
+            label: 'Tap',
           ),
           BottomNavigationBarItem(
             icon: Container(),
@@ -110,7 +113,11 @@ class _LandingPageState extends State<LandingPage> {
           ),
           BottomNavigationBarItem(
             icon: Container(),
-            label: 'Column in %',
+            label: 'Column %',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(),
+            label: 'Web',
           ),
         ],
         currentIndex: _selectedIndex,
