@@ -9,7 +9,6 @@ class InfiniteScrollPage extends StatefulWidget {
 }
 
 class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
-  // List<Breed> listBreeds = [];
   final scrollController = ScrollController();
   String dataUrl = 'https://catfact.ninja/breeds';
   bool hasMore = true;
@@ -57,7 +56,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
       body: Stack(
         children: [
           RefreshIndicator(
-            // TODO Refresh isn't working
             onRefresh: refreshData,
             child: StickyHeadersTable(
               scrollControllers:
@@ -91,14 +89,13 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
               ),
               cellDimensions: CellDimensions.fixed(
                 contentCellWidth: screenWidth / 3.3,
-                contentCellHeight: 50, // TODO Not all fits in a cell
+                contentCellHeight: 50,
                 stickyLegendWidth: screenWidth / 3.3,
                 stickyLegendHeight: 50,
               ),
             ),
           ),
           isLoading
-              // TODO Not working after the first load
               ? Center(child: const CircularProgressIndicator())
               : SizedBox.shrink(),
         ],
@@ -138,7 +135,6 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           hasMore = false;
         }
 
-        // listBreeds.addAll(newListBreeds);
         matrixBreeds;
       });
     } catch (e) {
@@ -153,8 +149,8 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
       isLoading = false;
       hasMore = true;
       dataUrl = 'https://catfact.ninja/breeds';
-      // listBreeds.clear();
       matrixBreeds.clear();
+      titleRow.clear();
     });
 
     fetchData();
