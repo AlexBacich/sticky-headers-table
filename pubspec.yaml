@@ -1,6 +1,6 @@
 name: table_sticky_headers
 description: Two-dimension table with both sticky headers. You may scroll left \ right and top \ bottom. Sticky headers always stay visible. Legend cell (top left) always visible too.
-version: 2.0.4
+version: 2.0.5
 homepage: https://github.com/AlexBacich/sticky-headers-table
 
 environment:

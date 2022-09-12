@@ -1,6 +1,9 @@
 ## Release Date
 * 1.09.2022
 
+## [2.0.5]
+* Added example of infinite scroll when loading from web
+
 ## [2.0.4]
 * Added ability to make scrollbars always visible
 * Added example with column width based on screen % 
