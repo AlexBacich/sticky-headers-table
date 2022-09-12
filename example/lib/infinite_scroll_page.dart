@@ -10,14 +10,14 @@ class InfiniteScrollPage extends StatefulWidget {
 
 class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   final scrollController = ScrollController();
-  String dataUrl = 'https://catfact.ninja/breeds';
-  bool hasMore = true;
-  bool isLoading = false;
+  var dataUrl = 'https://catfact.ninja/breeds';
+  var hasMore = true;
+  var isLoading = false;
 
   final legendCell = 'Breed';
-  List<String> titleColumn = ['Country', 'Origin', 'Coat', 'Pattern'];
-  List<String> titleRow = [];
-  List<List<String>> matrixBreeds = [];
+  final titleColumn = ['Country', 'Origin', 'Coat', 'Pattern'];
+  final titleRow = <String>[];
+  final matrixBreeds = <List<String>>[];
 
   @override
   void initState() {
@@ -31,8 +31,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         fetchData();
 
         if (hasMore == false) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('No more data to load')));
+          final snackBar =
+              const SnackBar(content: Text('No more data to load'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       }
     });
@@ -40,13 +41,13 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
 
   @override
   void dispose() {
-    super.dispose();
     scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -106,9 +107,7 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
   Future<void> fetchData() async {
     if (isLoading) return;
     if (dataUrl.isEmpty) return;
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
     try {
       final response = await Dio().get(
@@ -118,14 +117,14 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
           'X-CSRF-TOKEN': 'Ff5zTFjNYMSMeRLz30Pq0CDAK09rvbLVg65Bo73h',
         },
       );
-      Breeds newBreedsData = Breeds.fromJson(response.data);
-      final List<Breed> newListBreeds = newBreedsData.data ?? [];
+      final newBreedsData = Breeds.fromJson(response.data);
+      final newListBreeds = newBreedsData.data ?? <Breed>[];
 
-      newListBreeds.forEach((e) {
+      for (final e in newListBreeds) {
         titleRow.add(e.breed ?? '');
         matrixBreeds.add(
             [e.country ?? '', e.origin ?? '', e.coat ?? '', e.pattern ?? '']);
-      });
+      }
 
       setState(() {
         dataUrl = newBreedsData.nextPageUrl ?? '';
@@ -138,8 +137,9 @@ class _InfiniteScrollPageState extends State<InfiniteScrollPage> {
         matrixBreeds;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Occur data loading error. Please try latter')));
+      final snackBar = const SnackBar(
+          content: Text('Occur data loading error. Please try latter'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       print('Loading error: $e');
     }
   }

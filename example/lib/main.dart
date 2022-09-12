@@ -92,8 +92,7 @@ class _LandingPageState extends State<LandingPage> {
         child: _widgetOptions(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType
-            .fixed,
+        type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Container(),
